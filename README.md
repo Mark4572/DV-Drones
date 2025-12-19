@@ -1,2 +1,2 @@
 # DV-Drones
-Drones, with intteligent software
+Drones, with inteligent software
