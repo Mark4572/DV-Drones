@@ -1,2 +1,2 @@
 # DV-Drones
-Professional Drones with long Flight-Time and autonomous software.
+Drones, with intteligent software
