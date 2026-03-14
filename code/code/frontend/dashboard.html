@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drone Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <header>
+        <h1>Drone Control Dashboard</h1>
+        <button id="theme-toggle">🌙 Dark Mode</button>
+    </header>
+    <main>
+        <section class="status">
+            <h2>Drone Status</h2>
+            <div class="status-cards">
+                <div class="card">
+                    <h3>Battery</h3>
+                    <p id="stat-battery">85%</p>
+                </div>
+                <div class="card">
+                    <h3>Altitude</h3>
+                    <p class="altitude">120m</p>
+                </div>
+                <div class="card">
+                    <h3>Speed</h3>
+                    <p class="speed">12 m/s</p>
+                </div>
+                <div class="card">
+                    <h3>Status</h3>
+                    <p class="status">Active</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="controls">
+            <h2>Controls</h2>
+            <div class="control-buttons">
+                <button class="btn">Take Off</button>
+                <button class="btn">Land</button>
+                <button class="btn">Hover</button>
+                <button class="btn">Return Home</button>
+            </div>
+        </section>
+
+        <section class="console">
+            <h2>Command Console</h2>
+            <div class="terminal-window">
+                <div id="console-output" class="console-output">
+                    <div class="console-line system">Drone OS v1.0 initialized. Ready for commands...</div>
+                </div>
+                <div class="console-input-wrapper">
+                    <span class="prompt">&gt;</span>
+                    <input type="text" id="console-input" autocomplete="off" spellcheck="false" placeholder="Enter command...">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // --- THEME TOGGLE LOGIC ---
+            const themeToggle = document.getElementById("theme-toggle");
+            const body = document.body;
+
+            themeToggle.addEventListener("click", () => {
+                // Toggle the data-theme attribute on the body
+                if (body.getAttribute("data-theme") === "dark") {
+                    body.removeAttribute("data-theme");
+                    themeToggle.textContent = "🌙 Dark Mode";
+                } else {
+                    body.setAttribute("data-theme", "dark");
+                    themeToggle.textContent = "☀️ Light Mode";
+                }
+            });
+
+            // --- CONSOLE LOGIC ---
+            const input = document.getElementById("console-input");
+            const output = document.getElementById("console-output");
+
+            input.addEventListener("keypress", (e) => {
+                if (e.key === "Enter") {
+                    const cmd = input.value.trim();
+                    if (!cmd) return;
+
+                    // Print User Command
+                    printToConsole(`> ${cmd}`, "user");
+                    input.value = "";
+
+                    // Process Response
+                    setTimeout(() => {
+                        const lowCmd = cmd.toLowerCase();
+                        if (lowCmd === "help") {
+                            printToConsole("Commands: status, takeoff, land, clear", "system");
+                        } else if (lowCmd === "status") {
+                            printToConsole("System Check: All modules operational. Signal 100%.", "system");
+                        } else if (lowCmd === "clear") {
+                            output.innerHTML = "";
+                        } else if (lowCmd === "takeoff") {
+                            printToConsole("Launch sequence initiated...", "system");
+                        } else {
+                            printToConsole(`Unknown command: ${cmd}`, "error");
+                        }
+                    }, 300);
+                }
+            });
+
+            function printToConsole(text, type) {
+                const line = document.createElement("div");
+                line.className = `console-line ${type}`;
+                line.textContent = text;
+                output.appendChild(line);
+                output.scrollTop = output.scrollHeight;
+            }
+        });
+    </script>
+</body>
+</html>
