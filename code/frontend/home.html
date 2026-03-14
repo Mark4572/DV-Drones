@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drone Client</title>
+    <link rel="stylesheet" href="home.css">
+    
+    <style>
+        
+        .background {
+            --mouse-x: 50%;
+            --mouse-y: 50%;
+            
+        }
+    </style>
+
+  
+
+</head>
+<body>
+    <div class="background"></div>
+
+    <div class="container">
+        <h1>Drone Client</h1>
+        <nav>
+            <button onclick="window.location.href='/dashboard.html'">
+  <span>Dashboard</span>
+</button>
+<button onclick="window.location.href='/data.html'">
+  <span>Data</span>
+</button>
+<button onclick="window.location.href='/config.html'">
+  <span>Config</span>
+</button>
+
+        </nav>
+    </div>
+
+    <div class="taskbar">
+        <div class="taskbar-text" id="sys-date">--/--/----</div>
+        <div class="taskbar-text">dv_client_0.2beta</div>
+        <div class="taskbar-text" id="sys-time">--:--:--</div>
+    </div>
+
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const bg = document.querySelector('.background');
+            const timeEl = document.getElementById('sys-time');
+            const dateEl = document.getElementById('sys-date');
+
+            // 1. Mouse Tracking Logic
+            document.addEventListener('mousemove', (e) => {
+                if (bg) {
+                    const x = (e.clientX / window.innerWidth) * 95;
+                    const y = (e.clientY / window.innerHeight) * 95;
+                    
+                    // Updates the CSS variables in real-time
+                    bg.style.setProperty('--mouse-x', x + '%');
+                    bg.style.setProperty('--mouse-y', y + '%');
+                }
+            });
+
+            
+            function updateSystemTime() {
+                const now = new Date();
+                
+                
+                const timeString = now.toLocaleTimeString('en-US', { 
+                    hour12: false, 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit' 
+                });
+
+                
+                const dateString = now.toLocaleDateString('de-DE', { 
+                    day: 'numeric', 
+                    month: 'numeric', 
+                    year: 'numeric' 
+                });
+
+                if (timeEl) timeEl.textContent = timeString;
+                if (dateEl) dateEl.textContent = dateString;
+            }
+
+            // Start the clock
+            updateSystemTime();
+            setInterval(updateSystemTime, 1000);
+        });
+    </script>
+</body>
+</html>
