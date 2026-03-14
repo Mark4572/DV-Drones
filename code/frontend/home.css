@@ -1,3 +1,15 @@
+/* Register properties for smoother math transitions */
+@property --mouse-x {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 50%;
+}
+@property --mouse-y {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 50%;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -14,7 +26,7 @@ body {
     align-items: center;
     padding-bottom: 80px; 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    overflow: hidden; /* Prevents scrollbars during big jumps */
+    overflow: hidden;
 }
 
 .background {
@@ -24,16 +36,20 @@ body {
     width: 100vw;
     height: 100vh;
     z-index: -1;
-    /* We use 40% spread now for a tighter, cooler light beam */
+    /* Softer gradient stops for a smoother fade-out */
     background: radial-gradient(
         circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
-        rgba(0, 255, 255, 0.2) 0%, 
-        rgba(0, 0, 0, 1) 45%
+        rgba(0, 255, 255, 0.15) 0%, 
+        rgba(0, 255, 255, 0.05) 30%,
+        transparent 75%
     ), #000;
-    /* This cubic-bezier creates a "robotic" smooth-stop movement */
-    transition: --mouse-x 0.8s cubic-bezier(0.19, 1, 0.22, 1), 
-                --mouse-y 0.8s cubic-bezier(0.19, 1, 0.22, 1),
-                opacity 0.3s ease;
+    animation: bgPulse 8s infinite ease-in-out;
+    pointer-events: none;
+}
+
+@keyframes bgPulse {
+    0%, 100% { opacity: 0.6; filter: brightness(1); }
+    50% { opacity: 1; filter: brightness(1.2); }
 }
 
 .container {
@@ -57,7 +73,6 @@ nav {
     justify-content: center;
 }
 
-/* Button logic - fixed to allow unique colors */
 button {
     outline: none;
     cursor: pointer;
@@ -94,7 +109,6 @@ button:hover::before { transform: translate3d(100%, 0, 0); }
 .btn-conf { background: #19729b; }
 .btn-dev  { background: #175a99; }
 
-/* Taskbar */
 .taskbar {
     position: fixed;
     bottom: 0;
@@ -107,13 +121,37 @@ button:hover::before { transform: translate3d(100%, 0, 0); }
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 40px;
+    padding: 0 20px;
     z-index: 1000;
 }
 
 .taskbar-text {
     color: #00ffff;
     font-family: 'Courier New', monospace;
-    font-size: 1rem;
+    font-size: 0.9rem;
     text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+}
+
+/* GitHub Button - Styled as <a> to bypass click blockers */
+.btn-github {
+  text-decoration: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  border-radius: 100px;
+  font-weight: 800;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.75rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-github:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #fce803;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
