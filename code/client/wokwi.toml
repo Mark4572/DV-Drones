@@ -1,0 +1,5 @@
+[wokwi]
+version = 1
+firmware = '\.pio\build\adafruit_feather_esp32s2\firmware.bin'
+elf = '\.pio\build\adafruit_feather_esp32s2\firmware.elf'
+gdbServerPort=3333

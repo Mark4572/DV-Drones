@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-s2-devkitm-1", "id": "esp1", "top": 60, "left": 10, "attrs": {} },
+    { "type": "wokwi-mpu6050", "id": "imu1", "top": 288.93, "left": 151.75, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp1:3V3", "imu1:VCC", "red", [ "v-28.8", "h153.6" ] ],
+    [ "esp1:GND.2", "imu1:GND", "black", [ "h67.2" ] ],
+    [ "esp1:8", "imu1:SDA", "green", [ "h-28.8", "v134.4", "h144", "v-57.6", "h67.2", "v48" ] ],
+    [ "esp1:9", "imu1:SCL", "blue", [ "h-19.2", "v115.2", "h124.8", "v-57.6", "h86.32" ] ]
+  ],
+  "dependencies": {},
+  "serialMonitor": {
+    "collapse": false,
+    "convertEol": false,
+    "display": "auto",
+    "newline": "lf"
+    }
+}
