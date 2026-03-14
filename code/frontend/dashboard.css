@@ -2,11 +2,11 @@
     --bg-color: #ffffff;
     --text-color: #252121;
     --card-bg: #f9f9f9;
-    --header-bg: #007bff;
+    --header-bg: #229cac;
     --header-text: #ffffff;
-    --btn-bg: #007bff;
+    --btn-bg: #28a6cc;
     --btn-text: #ffffff;
-    --btn-hover: #0056b3;
+    --btn-hover: #1fa2a7;
 }
 
 [data-theme="dark"] {
@@ -15,7 +15,7 @@
     --card-bg: #4b4b4b;
     --header-bg: #333333;
     --header-text: #ffffff;
-    --btn-bg: #555555;
+    --btn-bg: #a0a0a0;
     --btn-text: #ffffff;
     --btn-hover: #777777;
 }
