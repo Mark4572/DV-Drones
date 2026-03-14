@@ -11,5 +11,11 @@
     [ "esp1:8", "imu1:SDA", "green", [ "h-28.8", "v134.4", "h144", "v-57.6", "h67.2", "v48" ] ],
     [ "esp1:9", "imu1:SCL", "blue", [ "h-19.2", "v115.2", "h124.8", "v-57.6", "h86.32" ] ]
   ],
-  "dependencies": {}
+  "dependencies": {},
+  "serialMonitor": {
+    "collapse": false,
+    "convertEol": false,
+    "display": "auto",
+    "newline": "lf"
+    }
 }

@@ -1,4 +1,5 @@
 [wokwi]
 version = 1
-firmware = 'build/flasher_args.json'
-elf = 'build/example_app.elf'
+firmware = '\.pio\build\adafruit_feather_esp32s2\firmware.bin'
+elf = '\.pio\build\adafruit_feather_esp32s2\firmware.elf'
+gdbServerPort=3333

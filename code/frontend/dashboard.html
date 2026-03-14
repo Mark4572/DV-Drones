@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<var>Droneid</var> =  "DRN-001";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -48,10 +49,10 @@
             <h2>Command Console</h2>
             <div class="terminal-window">
                 <div id="console-output" class="console-output">
-                    <div class="console-line system">Drone OS v1.0 initialized. Ready for commands...</div>
+                    <div class="console-line system"><script>{Droneid}</script></div>
                 </div>
                 <div class="console-input-wrapper">
-                    <span class="prompt">&gt;</span>
+                    <span class="prompt">&gt;</span>S
                     <input type="text" id="console-input" autocomplete="off" spellcheck="false" placeholder="Enter command...">
                 </div>
             </div>
@@ -78,6 +79,13 @@
             // --- CONSOLE LOGIC ---
             const input = document.getElementById("console-input");
             const output = document.getElementById("console-output");
+            const commands = {
+                help: "Displays available commands.",
+                status: "System Check: All modules operational. Signal 100%.",
+                takeoff: "Launch sequence initiated...",
+                land: "Landing sequence initiated...",
+                deviceinfo: `Drone ID: ${drone_id}`
+            };
 
             input.addEventListener("keypress", (e) => {
                 if (e.key === "Enter") {

@@ -5,13 +5,21 @@ from PyQt6.QtWidgets import QApplication, QMainWindow
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtCore import QUrl, QTimer
 from PyQt6.QtGui import QIcon
+import configparser
+
+base_dir = os.path.dirname(os.path.abspath(__file__))
+config_path = os.path.join(base_dir, 'config', 'general.cfg')
+config = configparser.ConfigParser()
+config.read(config_path)
+
+dv_version = config.get('general', 'dv_version', fallback='DV Client')
 
 class Browser(QMainWindow):
     def __init__(self):
         super().__init__()
 
         # 1. Window Configuration
-        self.setWindowTitle("DV_Client_0.2beta")
+        self.setWindowTitle(dv_version)
         icon_path = os.path.join(os.path.dirname(__file__), 'code/frontend/drohne.ico')
         if os.path.exists(icon_path):
             self.setWindowIcon(QIcon(icon_path))
