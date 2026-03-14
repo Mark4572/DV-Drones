@@ -43,7 +43,7 @@ def home_css():
 def dashboard():
     return send_file(os.path.join(os.path.dirname(__file__), 'dashboard.html'))
 
-@app.route('/dev')
+@app.route('/dev.html')
 def dev():
     return send_file(os.path.join(os.path.dirname(__file__), 'dev.html'))
 

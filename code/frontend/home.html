@@ -5,18 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drone Client</title>
     <link rel="stylesheet" href="home.css">
-    
-    <style>
-        
-        .background {
-            --mouse-x: 50%;
-            --mouse-y: 50%;
-            
-        }
-    </style>
-
-  
-
 </head>
 <body>
     <div class="background"></div>
@@ -24,72 +12,81 @@
     <div class="container">
         <h1>Drone Client</h1>
         <nav>
-            <button onclick="window.location.href='/dashboard.html'">
-  <span>Dashboard</span>
-</button>
-<button onclick="window.open('file://C:/Users/Administrator/OneDrive/Programms/Drone_Project/DV0/code/frontend/config/general.cfg')">
-  <span>Data</span>
-</button>
-<button onclick="window.location.href='/config.html'">
-  <span>Config</span>
-</button>
-
+            <button class="btn-dash" onclick="location.href='/dashboard.html'"><span>Dashboard</span></button>
+            <button class="btn-data" onclick="console.log('Open local storage')"><span>Data</span></button>
+            <button class="btn-conf" onclick="location.href='/config.html'"><span>Config</span></button>
+            <button class="btn-dev" onclick="location.href='/dev.html'"><span>Devmenu</span></button>
         </nav>
     </div>
 
     <div class="taskbar">
         <div class="taskbar-text" id="sys-date">--/--/----</div>
-html_content = f'<div class="taskbar-text"><script>{dv_version}</script></div>
+        <div class="taskbar-text">DRONE_OS_v1.0.4</div>
         <div class="taskbar-text" id="sys-time">--:--:--</div>
     </div>
-
-
-
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const bg = document.querySelector('.background');
             const timeEl = document.getElementById('sys-time');
             const dateEl = document.getElementById('sys-date');
+            
+            let isAutoMode = true;
+            let idleTimer;
+
+            // Function to update the actual CSS variables
+            function updatePos(x, y) {
+                bg.style.setProperty('--mouse-x', x + '%');
+                bg.style.setProperty('--mouse-y', y + '%');
+            }
 
             // 1. Mouse Tracking Logic
             document.addEventListener('mousemove', (e) => {
-                if (bg) {
-                    const x = (e.clientX / window.innerWidth) * 95;
-                    const y = (e.clientY / window.innerHeight) * 95;
-                    
-                    // Updates the CSS variables in real-time
-                    bg.style.setProperty('--mouse-x', x + '%');
-                    bg.style.setProperty('--mouse-y', y + '%');
-                }
+                isAutoMode = false; // Stop jumping while mouse is active
+                clearTimeout(idleTimer);
+
+                const x = (e.clientX / window.innerWidth) * 100;
+                const y = (e.clientY / window.innerHeight) * 100;
+                updatePos(x, y);
+
+                // If mouse stops moving for 3 seconds, turn AutoMode back on
+                idleTimer = setTimeout(() => {
+                    isAutoMode = true;
+                }, 3000);
             });
 
-            
-            function updateSystemTime() {
-                const now = new Date();
-                
-                
-                const timeString = now.toLocaleTimeString('en-US', { 
-                    hour12: false, 
-                    hour: '2-digit', 
-                    minute: '2-digit', 
-                    second: '2-digit' 
-                });
+            // 2. Random Edge Jump Logic
+            function jumpToRandomEdge() {
+                if (!isAutoMode) return;
 
-                
-                const dateString = now.toLocaleDateString('de-DE', { 
-                    day: 'numeric', 
-                    month: 'numeric', 
-                    year: 'numeric' 
-                });
+                const points = [
+                    {x: 0, y: 0}, {x: 100, y: 0},   // Corners
+                    {x: 0, y: 100}, {x: 100, y: 100},
+                    {x: 50, y: 50}, {x: 80, y: 20},  // Random tech points
+                    {x: 20, y: 80}
+                ];
 
-                if (timeEl) timeEl.textContent = timeString;
-                if (dateEl) dateEl.textContent = dateString;
+                const target = points[Math.floor(Math.random() * points.length)];
+                
+                // Add a little "flicker" effect during the jump
+                bg.style.opacity = "0.5";
+                setTimeout(() => {
+                    updatePos(target.x, target.y);
+                    bg.style.opacity = "1";
+                }, 100);
             }
 
-            // Start the clock
-            updateSystemTime();
-            setInterval(updateSystemTime, 1000);
+            // Run jump cycle every 4 seconds
+            setInterval(jumpToRandomEdge, 4000);
+
+            // 3. Clock
+            function updateClock() {
+                const now = new Date();
+                if (timeEl) timeEl.textContent = now.toLocaleTimeString('en-GB');
+                if (dateEl) dateEl.textContent = now.toLocaleDateString('de-DE');
+            }
+            setInterval(updateClock, 1000);
+            updateClock();
         });
     </script>
 </body>
