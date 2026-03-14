@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Drone Command Center</title>
+    <style>
+        :root {
+            --bg-black: #0a0a0a;
+            --cyan-neon: #00f2ff;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --border-cyan: rgba(0, 242, 255, 0.3);
+        }
+
+        body {
+            background-color: var(--bg-black);
+            color: white;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--border-cyan);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.05);
+        }
+
+        .full-width { grid-column: span 2; }
+
+        h2 {
+            color: var(--cyan-neon);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1rem;
+            margin-top: 0;
+            border-bottom: 1px solid var(--border-cyan);
+            padding-bottom: 10px;
+        }
+
+        .input-group { margin: 15px 0; }
+
+        label { display: block; font-size: 0.8rem; color: #aaa; margin-bottom: 5px; }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #333;
+            color: var(--cyan-neon);
+            padding: 8px;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        input:focus { border-color: var(--cyan-neon); }
+
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .cmd-btn {
+            background: transparent;
+            border: 1px solid var(--cyan-neon);
+            color: var(--cyan-neon);
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+        }
+
+        .cmd-btn:hover {
+            background: var(--cyan-neon);
+            color: black;
+            box-shadow: 0 0 15px var(--cyan-neon);
+        }
+
+        .status-badge {
+            color: #00ff88;
+            font-family: monospace;
+            background: rgba(0, 255, 136, 0.1);
+            padding: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header/Device Info -->
+    <div class="card full-width">
+        <h2>Device Info: DRN-001</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <p>Version: <span style="color:var(--cyan-neon)">DV_Client_0.2beta</span></p>
+            <div class="status-badge">ONLINE</div>
+        </div>
+    </div>
+
+    <!-- General Settings -->
+    <div class="card">
+        <h2>General Config</h2>
+        <div class="input-group">
+            <label>Language</label>
+            <select><option>en</option></select>
+        </div>
+        <div class="input-group">
+            <label>Units</label>
+            <select><option>metric</option><option>imperial</option></select>
+        </div>
+        <div class="input-group">
+            <label>Max Altitude (m)</label>
+            <input type="number" value="100">
+        </div>
+    </div>
+
+    <!-- Telemetry & Performance -->
+    <div class="card">
+        <h2>Performance</h2>
+        <div class="input-group">
+            <label>Update Interval (sec)</label>
+            <input type="number" value="1">
+        </div>
+        <div class="input-group">
+            <label>Max Speed (m/s)</label>
+            <input type="number" value="15">
+        </div>
+        <div class="input-group">
+            <label>Refresh Rate (sec)</label>
+            <input type="number" value="5">
+        </div>
+    </div>
+
+    <!-- Quick Commands -->
+    <div class="card full-width">
+        <h2>System Commands</h2>
+        <div class="btn-group">
+            <button class="cmd-btn">Takeoff</button>
+            <button class="cmd-btn">Land</button>
+            <button class="cmd-btn">Status Check</button>
+            <button class="cmd-btn">Help</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

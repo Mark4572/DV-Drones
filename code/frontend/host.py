@@ -26,7 +26,7 @@ def camera_image():
 def data():
     return send_file(os.path.join(os.path.dirname(__file__), 'data.html'))
 
-@app.route('/config')
+@app.route('/config.html')
 def config():
     return send_file(os.path.join(os.path.dirname(__file__), 'config.html'))
 
