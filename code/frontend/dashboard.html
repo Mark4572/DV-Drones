@@ -24,19 +24,23 @@
             <div class="status-cards">
                 <div class="card">
                     <h3>Battery</h3>
-                    <p id="stat-battery">85%</p>
+                    <p id="stat-battery">{battery}</p>
                 </div>
                 <div class="card">
                     <h3>Altitude</h3>
-                    <p id="stat-altitude">120m</p>
+                    <p id="stat-altitude">{altitude}</p>
                 </div>
                 <div class="card">
                     <h3>Speed</h3>
-                    <p id="stat-speed">12 m/s</p>
+                    <p id="stat-speed">{speed}</p>
                 </div>
                 <div class="card">
                     <h3>Status</h3>
-                    <p id="stat-status">${Status}</p>
+                    <p id="stat-status">{status}</p>
+                </div>
+                <div class="card">
+                    <h3>Location</h3>
+                    <p id="stat-status">{location}</p>
                 </div>
             </div>
         </section>
@@ -44,10 +48,16 @@
         <section class="controls">
             <h2>Controls</h2>
             <div class="control-buttons">
-                <button class="btn" onclick="executeCommand('takeoff')">Take Off</button>
-                <button class="btn" onclick="executeCommand('land')">Land</button>
-                <button class="btn" onclick="executeCommand('hover')">Hover</button>
-                <button class="btn" onclick="executeCommand('return home')">Return Home</button>
+                <button class="btn" onclick="executeCommand('placeholder0')">QC0</button>
+                <button class="btn" onclick="executeCommand('placeholder1')">QC1</button>
+                <button class="btn" onclick="executeCommand('placeholder2')">QC2</button>
+                <button class="btn" onclick="executeCommand('placeholder3')">QC3</button>
+                <button class="btn" onclick="executeCommand('placeholder4')">QC4</button>
+                <button class="btn" onclick="executeCommand('placeholder5')">QC5</button>
+                <button class="btn" onclick="executeCommand('placeholder6')">QC6</button>
+                <button class="btn" onclick="executeCommand('placeholder7')">QC7</button>
+                <button class="btn" onclick="executeCommand('placeholder8')">QC8</button>
+                <button class="btn" onclick="executeCommand('placeholder9')">QC9</button>
             </div>
         </section>
 
@@ -97,13 +107,13 @@
 
             // Command Definitions
             const commands = {
-                "help": "Available: takeoff, land, status, clear, fetch --all",
-                "takeoff": "Protocol initiated. Engines starting... Drone is airborne.",
-                "land": "Decreasing altitude. Landing gear deployed. Drone grounded.",
-                "hover": "Maintaining current position. Altitude stabilized.",
-                "status": "All systems nominal. Signal strength: Excellent.",
+                "help": "Available: flash, mission, status, clear, fetch --all",
+                "flash": "",
+                "mission": "",
+                "hover": "",
+                "status": "",
                 "fetch --all": async () => {
-                    printToConsole("Accessing secure network data...", "system");
+                    printToConsole("Readsing Data...", "system");
                     const local = await getLocalDeviceData();
                     return `
 [REMOTE DRONE DATA]

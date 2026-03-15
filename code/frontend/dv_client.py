@@ -1,53 +1,52 @@
-import sys
-import os
-import subprocess
-from PyQt6.QtWidgets import QApplication, QMainWindow, QSplashScreen
+import sys, os, subprocess, ctypes
+from PyQt6.QtWidgets import QApplication, QSplashScreen
 from PyQt6.QtWebEngineWidgets import QWebEngineView
-from PyQt6.QtCore import QUrl, QTimer, Qt
-from PyQt6.QtGui import QIcon, QPixmap
-
-class Browser(QMainWindow):
-    def __init__(self, port):
-        super().__init__()
-        self.server_url = f"http://127.0.0.1:{port}/"
-        
-        self.setWindowTitle("DV Client")
-        self.setGeometry(100, 100, 1280, 800)
-        self.browser = QWebEngineView()
-        self.browser.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu) 
-        
-        self.setCentralWidget(self.browser)
-
-    def load_content(self):
-        self.browser.setUrl(QUrl(self.server_url))
-        self.showMaximized()
-
-def start_backend(base_dir, port):
-    host_path = os.path.join(base_dir, 'host.py')
-    return subprocess.Popen([sys.executable, host_path], cwd=base_dir)
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    base_dir = os.path.dirname(os.path.abspath(__file__))
+from PyQt6.QtCore import QUrl, Qt, QTimer
+from PyQt6.QtGui import QPixmap, QIcon
 
 
-    splash_path = os.path.join(base_dir, 'code/frontend/drohne.ico')
-    splash = QSplashScreen(QPixmap(splash_path))
-    splash.show()
-    splash.showMessage("Init Client", Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignCenter, Qt.GlobalColor.white)
+if sys.platform == 'win32':
+    
+    myappid = 'mark4572.dvclient.v0.2' 
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
-    host_proc = start_backend(base_dir, 47000)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+URL = "http://127.0.0.1:47000/"
+icon_path = os.path.join(BASE_DIR, "vscode32.png")
 
-    window = Browser(47000)
 
-    def finalize_launch():
-        window.load_content()
-        splash.finish(window) 
+if not os.path.exists(icon_path):
+    print(f"Icon not found at: {icon_path}")
 
-   
-    QTimer.singleShot(0, finalize_launch)
+app = QApplication(sys.argv)
 
-    exit_code = app.exec()
-    if host_proc:
-        host_proc.terminate()
-    sys.exit(exit_code)
+app_icon = QIcon(icon_path)
+app.setWindowIcon(app_icon)
+
+
+splash_pix = QPixmap(os.path.join(BASE_DIR, 'placeholder.ico'))
+splash = QSplashScreen(splash_pix)
+splash.setWindowIcon(app_icon) 
+splash.show()
+splash.showMessage("Init Client", Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignCenter, Qt.GlobalColor.white)
+
+
+backend = subprocess.Popen([sys.executable, "host.py"], cwd=BASE_DIR)
+
+view = QWebEngineView()
+view.setWindowTitle("DV Client")
+view.setWindowIcon(app_icon) 
+view.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
+
+def finalize():
+    view.load(QUrl(URL))
+    view.resize(1200, 800) 
+    view.show()
+    splash.finish(view)
+
+
+QTimer.singleShot(100, finalize)
+
+exit_code = app.exec()
+backend.terminate()
+sys.exit(exit_code)
