@@ -40,10 +40,10 @@
             const timeEl = document.getElementById('sys-time');
             const dateEl = document.getElementById('sys-date');
             
-            // --- Smoother Mouse Follow (Lerp) ---
+      
             let targetX = 50, targetY = 50;
             let currentX = 50, currentY = 50;
-            const lerpFactor = 0.05; // Adjust this (0.01 to 0.1) for smoothness
+            const lerpFactor = 0.05; 
 
             document.addEventListener('mousemove', (e) => {
                 targetX = (e.clientX / window.innerWidth) * 100;
@@ -51,7 +51,7 @@
             });
 
             function updateLoop() {
-                // Smooth interpolation
+
                 currentX += (targetX - currentX) * lerpFactor;
                 currentY += (targetY - currentY) * lerpFactor;
 
@@ -62,7 +62,6 @@
             }
             updateLoop();
 
-            // --- System Clock ---
             function updateClock() {
                 const now = new Date();
                 if (timeEl) timeEl.textContent = now.toLocaleTimeString('en-GB');

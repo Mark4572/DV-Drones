@@ -6,7 +6,6 @@
     <title>Drone Dashboard</title>
     <link rel="stylesheet" href="dashboard.css">
     <style>
-        /* Ensuring the terminal looks authentic */
         .console-line {
             white-space: pre-wrap;
             margin-bottom: 5px;
@@ -82,11 +81,11 @@
 
             const droneId = "DRN-001";
 
-            // Helper to gather local browser/device data including IP
+            
             const getLocalDeviceData = async () => {
                 let publicIp = "Fetching...";
                 try {
-                    // Using ipify API to get the public IP
+                    
                     const response = await fetch('https://api.ipify.org?format=json');
                     const data = await response.json();
                     publicIp = data.ip;
@@ -105,7 +104,7 @@
                 };
             };
 
-            // Command Definitions
+           
             const commands = {
                 "help": "Available: flash, mission, status, clear, fetch --all",
                 "flash": "",
@@ -141,11 +140,11 @@ Local Time: ${local.time}
                 output.scrollTop = output.scrollHeight;
             }
 
-            // Global execution function for buttons and input
+            
             window.executeCommand = async (cmdText) => {
                 printToConsole(`> ${cmdText}`, "user");
                 
-                // Allow time for "processing" feel
+                
                 await new Promise(resolve => setTimeout(resolve, 250));
 
                 const lowCmd = cmdText.toLowerCase();
@@ -156,7 +155,6 @@ Local Time: ${local.time}
 
                 const response = commands[lowCmd];
                 if (typeof response === "function") {
-                    // Handle async commands like fetch --all
                     const result = await response();
                     printToConsole(result, "system");
                 } else if (response) {
@@ -166,7 +164,7 @@ Local Time: ${local.time}
                 }
             };
 
-            // Event Listeners
+
             input.addEventListener("keypress", (e) => {
                 if (e.key === "Enter") {
                     const val = input.value.trim();
@@ -187,7 +185,6 @@ Local Time: ${local.time}
                 }
             });
 
-            // Initial Welcome Message
             printToConsole(`System Booted. Authorized connection to ${droneId}.`, "system");
         });
     </script>
