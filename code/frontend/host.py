@@ -47,6 +47,12 @@ def dashboard():
 def dev():
     return send_file(os.path.join(os.path.dirname(__file__), 'dev.html'))
 
+@app.route('/cmd.html')
+def cmd():
+    return send_file(os.path.join(os.path.dirname(__file__), 'cmd.html'))
+
+
+
 
 
 if __name__ == "__main__":
