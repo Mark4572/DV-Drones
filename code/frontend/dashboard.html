@@ -46,7 +46,11 @@
                 </div>
                 <div class="card">
                     <h3>Location</h3>
-                    <p id="stat-status">{location}</p>
+                    <p id="stat-location">{location}</p>
+                </div>
+                <div class="card">
+                    <h3>Tilt</h3>
+                    <p id="stat-tilt">{tilt}</p>
                 </div>
             </div>
         </section>
@@ -280,7 +284,10 @@ Local Time: ${local.time}
                             document.getElementById('stat-battery').textContent = data.batt.toFixed ? data.batt.toFixed(2) + ' V' : data.batt;
                         }
                         if (data.lat !== undefined && data.lng !== undefined) {
-                            document.getElementById('stat-status').textContent = `Lat:${data.lat.toFixed(6)} Lng:${data.lng.toFixed(6)}`;
+                            document.getElementById('stat-location').textContent = `Lat:${data.lat.toFixed(6)} Lng:${data.lng.toFixed(6)}`;
+                        }
+                        if (data.tilt_x !== undefined && data.tilt_y !== undefined) {
+                            document.getElementById('stat-tilt').textContent = `X:${data.tilt_x.toFixed(1)}° Y:${data.tilt_y.toFixed(1)}°`;
                         }
                         // handle replies from ESP
                         if (data.result) printToConsole('ESP: ' + JSON.stringify(data), 'esp');
