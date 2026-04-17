@@ -7,6 +7,7 @@ class flight_controller {
         pid roll_pid;
         pid yaw_pid;
         pid pitch_pid;
+        // io_controller io_handler;
 
     public:
 
@@ -15,5 +16,9 @@ class flight_controller {
             this->roll_pid = roll_pid;
             this->yaw_pid = yaw_pid;
             this->pitch_pid = pitch_pid;
+        };
+
+        void step(float delta_time) {
+
         };
 };
