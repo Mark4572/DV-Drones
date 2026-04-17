@@ -1,4 +1,4 @@
-class pid {
+class pid_controller {
 
     private:
         float p;
@@ -21,13 +21,19 @@ class pid {
         };
 
     public:
-        pid(float p, float i, float d) {
+        pid_controller(float p, float i, float d) {
             this->p = p;
             this->i = i;
             this->d = d;
         };
 
-        ~pid() {};
+        pid_controller() {
+            this->p = 0.0f;
+            this->i = 0.0f;
+            this->d = 0.0f;
+        }
+
+        ~pid_controller() {};
 
         float run_pid(float setpoint, float value, float delta_time) { // delta_time in seconds
             float error = setpoint - value;

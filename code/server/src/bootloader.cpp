@@ -1,15 +1,12 @@
-//#include "flight_controller/flight_controller.cpp"
 #include <Arduino.h>
-#include <iostream>
-#include <esp_sleep.h>
-#include <thread>
-#include <vector>
-#include <functional>
-#include <type_traits>
 #include "lib/bootconfig.h"
+#include <thread>
+#include <functional>
+#include <thread>
+// #include "flight_controller/flight_controller.cpp"
+// #include "flight_controller/pid.cpp" 
 #include "connection/connector.h"
-#include "flight_controller/flight_controller.cpp"
-#include "flight_controller/pid.cpp"                                                                                   
+#include "include/threading/threading.h"
 
 class bootloader
 {
@@ -18,10 +15,10 @@ private:
 
 
 public:
-    bootloader(/* args */);
-    ~bootloader();
+    bootloader(/* args */) {};
+    ~bootloader() {};
 
-    void add_thread(std::function<int(void)> function) {
+    void add_thread(std::function<void(void)> function) {
         std::thread thr(function);
         thr.detach();
     };
@@ -34,13 +31,7 @@ public:
         Serial.println(BOOTLOADER_ID);
         Serial.println(BOOTLOADER_MANUFACTURER);
 
-        add_thread([]() -> int {
-            // example thread function
-            while (true) {
-                connection();
-            }
-            return 0;
-        });
+        add_thread(connection);
         
         // example multithreading code
         // the function has to have no arguments and an int as return type
@@ -48,10 +39,12 @@ public:
     };
 
 };
-bootloader::bootloader()
-{
-}
 
-bootloader::~bootloader()
-{
-}
+void setup() {
+    bootloader booter = bootloader();
+    booter.boot();
+};
+
+void loop() {
+
+};
