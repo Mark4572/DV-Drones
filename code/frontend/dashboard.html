@@ -18,7 +18,7 @@
         <div style="display:flex;align-items:center;gap:12px">
             <div>
                 <input id="esp-ip" placeholder="ESP IP (e.g. 192.168.1.50)" style="padding:6px;border-radius:6px;border:1px solid #ccc"> 
-                <input id="esp-port" placeholder="WS Port" value="81" style="width:80px;padding:6px;border-radius:6px;border:1px solid #ccc">
+                <input id="esp-port" placeholder="ESP Port" value="81" style="width:80px;padding:6px;border-radius:6px;border:1px solid #ccc">
                 <button id="conn-btn" class="btn">Connect</button>
             </div>
             <button id="theme-toggle">🌙 Dark Mode</button>
@@ -180,9 +180,10 @@ Local Time: ${local.time}
                         return;
                     }
 
+                    const port = portInput.value.trim() || '81';
                     const path = cmdText;
                     try {
-                        const response = await fetch(`http://${ip}:3030${path}`);
+                        const response = await fetch(`http://${ip}:${port}${path}`);
                         const text = await response.text();
                         if (response.ok) {
                             try {
@@ -262,7 +263,7 @@ Local Time: ${local.time}
 
             function connectToESP() {
                 const ip = ipInput.value.trim();
-                const port = portInput.value.trim() || '3030';
+                const port = portInput.value.trim() || '81';
                 if (!ip) { printToConsole('Please enter ESP IP', 'error'); return; }
                 if (ws && ws.readyState !== WebSocket.CLOSED) {
                     printToConsole('Already connected. Disconnect first.', 'error');
@@ -321,4 +322,4 @@ Local Time: ${local.time}
         });
     </script>
 </body>
-</html>
+</html> 
