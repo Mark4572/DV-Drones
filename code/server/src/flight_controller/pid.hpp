@@ -1,3 +1,5 @@
+#pragma once
+
 class pid_controller {
 
     private:
@@ -35,7 +37,7 @@ class pid_controller {
 
         ~pid_controller() {};
 
-        float run_pid(float setpoint, float value, float delta_time) { // delta_time in seconds
+        float run_pid(float setpoint, float value, double delta_time) { // delta_time in seconds
             float error = setpoint - value;
             this->integral += error * delta_time;
 
