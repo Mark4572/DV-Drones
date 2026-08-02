@@ -1,4 +1,0 @@
-[wokwi]
-version = 1
-firmware = '.pio/build/featheresp32-s2/firmware.bin'
-elf = '.pio/build/adafruit_feather_esp32s2/firmware.elf'
