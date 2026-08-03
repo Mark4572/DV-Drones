@@ -14,6 +14,7 @@ import time
 #global variables
 
 ready = False
+connect = False
 
 #Flask server
 class Server:
@@ -31,7 +32,7 @@ class Server:
         return fs.send_file("api.js")
     
     def home(self):
-        return fs.send_file("index.html")
+        return fs.send_file("home.html")
     
     def update(self):
         return fs.send_file("update.html")
@@ -39,6 +40,10 @@ class Server:
     def cs(self):
         global ready
         return fs.jsonify({"ready": ready})
+    
+    def theme(self):
+        return fs.send_file("index.html")
+    
 
 
     def register_routes(self):
@@ -48,7 +53,6 @@ class Server:
         self.svr.add_url_rule("/api", "api", self.api)
         self.svr.add_url_rule("/update", "update", self.update)
         self.svr.add_url_rule("/api/ready", "cs", self.cs)
-
 
     def add_route(self, rule, endpoint, view_func, methods=None):
         if methods is None:
@@ -100,7 +104,6 @@ def update():
         error(0)
         return None
 
-
 def init ():
     if not os.path.exists("config.json"):
         print("Error: config.json not found.")
@@ -128,20 +131,26 @@ class load:
         if all(startparameters):
             
             ready = True
-
-            
-    
-            
+         
 class install:
     def update(file):
+        global update
         with open(file, "w") as f:
             try:
                 json.dump(f, indent=4)
+                update = True
             except Exception as e:
                 return error(2)
             time.sleep(5000)
-            global update
             update = True
+                      
+class save:
+    def cfg(file, parameters):
+        with open(file, "w") as f:
+            try:
+                json.dump(parameters, f, indent=4)
+            except Exception as e:
+                return error(2)
             
 class vx(QMainWindow):
     def __init__(self):
@@ -158,7 +167,6 @@ class vx(QMainWindow):
         bsfolder = os.path.dirname(os.path.abspath(__file__))
         icopath = os.path.join(bsfolder, "static", "icon.ico")
         app.setWindowIcon(QIcon(icopath))
-
 
 class thread(threading.Thread):
     @staticmethod
@@ -182,7 +190,18 @@ class thread(threading.Thread):
         thread.thread.join()
         thread.thread = threading.Thread(target=thread.target, args=thread.args)
         thread.thread.start()
-             
+
+class client:
+    def connect(ip, port):
+        try:
+            response = rq.get(f"http://{ip}:{port}/api/ready", timeout=3)
+        except Exception:
+            global connect
+            connect = False
+            error(0)
+            return False
+        connect = True
+
 def run(fs):
     fs = Server()
     fs.register_routes()
@@ -195,7 +214,8 @@ if __name__ == "__main__":
     install.update("latest.json")
     qt_app = QApplication(sys.argv)
     window = vx()
-    window.show()             
+    window.show()
+    client.connect("127.0.0.1", 504)            
     sys.exit(qt_app.exec()) 
     
 
