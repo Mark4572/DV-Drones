@@ -1,3 +1,5 @@
+from unittest import case
+
 import flask as fs
 import os
 import threading
@@ -43,6 +45,22 @@ class Server:
     
     def theme(self):
         return fs.send_file("index.html")
+    
+    def error(self, code):
+        match code:
+            case 0:
+                return """
+                 <!DOCTYPE html>
+                <html>
+                <head>
+                  <title>Error</title>
+                 </head>
+                <body>
+                  <h1>001 - No Connection</h1>
+                      <p>Please check your internet connection and try again.</p>
+                     </body>
+                 </html>
+                        """
     
 
 
