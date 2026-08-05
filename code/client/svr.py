@@ -15,6 +15,7 @@ import time
 
 ready = False
 connect = False
+uptodate = True
 
 #Flask server
 class Server:
@@ -43,6 +44,50 @@ class Server:
     
     def theme(self):
         return fs.send_file("index.html")
+    
+    def error(self, code):
+        match code:
+            case 0:
+                return  '''
+                <h1>000 - No Connection</h1>
+                <p>There is no connection to the server. Please check your network connection and try again.</p>
+                '''
+            case 1:
+                return  '''
+                <h1>001 - Invalid response from the server</h1>
+                <p>The server returned an invalid response. Please try again later.</p>
+                '''
+            case 2:
+                return  '''
+                <h1>002 - Update could not be installed</h1>
+                <p>The update could not be installed. Please try again later.</p>
+                '''
+            case 3:
+                return  '''
+                <h1>003 - Update could not be downloaded</h1>
+                <p>The update could not be downloaded. Please check your network connection and try again.</p>
+                '''
+            case 4:
+                return  '''
+                <h1>004 - Data could not be parsed</h1>
+                <p>The data could not be parsed. Please try again later.</p>
+                '''
+            case 5:
+                return  '''
+                <h1>005 - Invalid API response</h1>
+                <p>The API returned an invalid response. Please try again later.</p>
+                '''
+            case 6:
+                return  '''
+                <h1>006 - Invalid API login</h1>
+                <p>The API login credentials are invalid. Please check your credentials and try again.</p>
+                '''
+            case 7: 
+                return  '''
+                <h1>007 - Config file error </h1>
+                <p>Config file missing or corrupted.</p>
+            '''
+            
     
 
 
@@ -96,6 +141,8 @@ def update():
     try:
         response = rq.get(API, timeout=3)
         if response.status_code == 200:
+            global uptodate
+            uptodate = response.json().get("uptodate", False)
             return response.json()
         else:
             error(0)
