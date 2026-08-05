@@ -61,9 +61,8 @@ class Server:
                      </body>
                  </html>
                         """
+            
     
-
-
     def register_routes(self):
         self.svr.add_url_rule("/", "init", self.init)
         self.svr.add_url_rule("/api/status", "status", self.status)
@@ -77,8 +76,8 @@ class Server:
          methods = ["GET"]
          self.svr.add_url_rule(rule, endpoint, view_func, methods=methods)
          
-def error(code):
-    match code:
+    def error(self, code):
+     match code:
         case 0:
             print("Error: No Connection.")
         case 1:
@@ -97,7 +96,7 @@ def error(code):
             print("Error: Config file is missing or corrupted.")
         case 403:
             print("Error: Access denied.")
-            fs.abort(403)
+            self.error(403)
         case 404:
             print("Error: Resource not found.")
             fs.abort(404)
