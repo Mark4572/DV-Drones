@@ -17,10 +17,11 @@ ready = False
 connect = False
 uptodate = True
 
-#Flask server
 class Server:
     def __init__(self):
         self.base_dir = os.path.dirname(os.path.abspath(__file__))
+        print(f"[DEBUG] Webfolder: {self.base_dir}")
+
         self.svr = fs.Flask(__name__, static_folder="static", static_url_path="/static")
         self.routes()
 
@@ -34,6 +35,10 @@ class Server:
 
     def api(self):
         path = os.path.join(self.base_dir, "api.js")
+        return fs.send_file(path)
+    
+    def theme_js(self):
+        path = os.path.join(self.base_dir, "theme.js")
         return fs.send_file(path)
     
     def home(self):
@@ -51,67 +56,29 @@ class Server:
     def theme(self):
         path = os.path.join(self.base_dir, "index.html")
         return fs.send_file(path)
+
+    def get_version(self):
+        path = os.path.join(self.base_dir, "latest.json")
+        return fs.send_file(path)
     
     def error(self, code):
-            match code:
-                case 0:
-                    return  '''
-                    <h1>000 - No Connection</h1>
-                    <p>There is no connection to the server. Please check your network connection and try again.</p>
-                    '''
-                case 1:
-                    return  '''
-                    <h1>001 - Invalid response from the server</h1>
-                    <p>The server returned an invalid response. Please try again later.</p>
-                    '''
-                case 2:
-                    return  '''
-                    <h1>002 - Update could not be installed</h1>
-                    <p>The update could not be installed. Please try again later.</p>
-                    '''
-                case 3:
-                    return  '''
-                    <h1>003 - Update could not be downloaded</h1>
-                    <p>The update could not be downloaded. Please check your network connection and try again.</p>
-                    '''
-                case 4:
-                    return  '''
-                    <h1>004 - Data could not be parsed</h1>
-                    <p>The data could not be parsed. Please try again later.</p>
-                    '''
-                case 5:
-                    return  '''
-                    <h1>005 - Invalid API response</h1>
-                    <p>The API returned an invalid response. Please try again later.</p>
-                    '''
-                case 6:
-                    return  '''
-                    <h1>006 - Invalid API login</h1>
-                    <p>The API login credentials are invalid. Please check your credentials and try again.</p>
-                    '''
-                case 7: 
-                    return  '''
-                    <h1>007 - Config file error </h1>
-                    <p>Config file missing or corrupted.</p>
-                '''
-                case 403:
-                    return '''
-                    <h1>403 - Forbidden</h1>
-                    <p>You have no permission to visit this site.</p>
-                '''
-                case 404:
-                    return '''
-                    <h1>404 -  Not found</h1>
-                    <p>The Site you are looking for was not found</p>
-                '''
-                case 500:
-                    return '''
-                    <h1>500 -  Internal Server error</h1>
-                    <p>An internal server error occurred</p>
-                '''
+        match code:
+            case 0: return '<h1>000 - No Connection</h1>'
+            case 1: return '<h1>001 - Invalid response</h1>'
+            case 2: return '<h1>002 - Update error</h1>'
+            case 3: return '<h1>003 - Download error</h1>'
+            case 4: return '<h1>004 - Parse error</h1>'
+            case 5: return '<h1>005 - Invalid API</h1>'
+            case 6: return '<h1>006 - Invalid Login</h1>'
+            case 7: return '<h1>007 - Config file error</h1>'
+            case 403: return '<h1>403 - Forbidden</h1>'
+            case 404: return '<h1>404 - Not found</h1>'
+            case 500: return '<h1>500 - Internal Server error</h1>'
+            case _: return '<h1>Error</h1>'
             
     def routes(self):
         self.svr.route("/", methods=["GET"])(self.theme)
+        self.svr.route("/theme.js", methods=["GET"])(self.theme_js)
         self.svr.route("/init", methods=["GET"])(self.init)
         self.svr.route("/api/status", methods=["GET"])(self.status)
         self.svr.route("/home", methods=["GET"])(self.home)
@@ -119,11 +86,12 @@ class Server:
         self.svr.route("/update", methods=["GET"])(self.update)
         self.svr.route("/api/ready", methods=["GET"])(self.cs)
         self.svr.route("/error", methods=["GET"])(self.error)
+        self.svr.route("/latest.json", methods=["GET"])(self.get_version)
         
     def add_route(self, rule, view_func, methods=None):
         if methods is None:
-         methods = ["GET"]
-         self.svr.route(rule, methods=methods)(view_func)
+            methods = ["GET"]
+        self.svr.route(rule, methods=methods)(view_func)
          
 def error(code):
     match code:

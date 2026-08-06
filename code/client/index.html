@@ -1,321 +1,488 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NoRisk Launcher - Dashboard</title>
-    <style>
-        /* Core Reset & Fonts */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Theme Studio</title>
+  <style>
+    :root {
+      --bg-dark: #0f051d;
+      --accent-primary: #ff007f;
+      --accent-secondary: #00f3ff;
+      --panel-bg: rgba(15, 5, 29, 0.85);
+      --panel-border: rgba(0, 243, 255, 0.4);
+      --text-main: #ffffff;
+    }
 
-        /* Standard Werte */
-        :root {
-            --bg-dark: #0a090f;
-            --accent-purple: #9333ea;
-            --accent-glow: #bd5cff;
-            --panel-bg: rgba(20, 18, 31, 0.6);
-            --panel-border: rgba(255, 255, 255, 0.08);
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-        }
+    * { box-sizing: border-box; margin: 0; padding: 0; transition: color 0.2s, background 0.2s, border-color 0.2s; }
 
-        body {
-            min-height: 100vh;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            overflow: hidden;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+    }
 
-       
-        #fxCanvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
 
-   
-        .main-layout {
-            flex: 1;
-            display: flex;
-            z-index: 10;
-            position: relative;
-            height: calc(100vh - 40px);
-        }
+    .studio-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 650px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      backdrop-filter: blur(14px);
+      border-radius: 16px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: 0 0 35px rgba(0, 243, 255, 0.2);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
 
-  
-        .sidebar {
-            width: 240px;
-            background: var(--panel-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-right: 1px solid var(--panel-border);
-            padding: 2rem 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
+    .studio-container h1 {
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        .logo-area {
-            font-size: 1.5rem;
-            font-weight: 900;
-            letter-spacing: 1px;
-            margin-bottom: 2rem;
-            padding-left: 0.5rem;
-            background: linear-gradient(135deg, #ffffff 40%, var(--accent-glow) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
 
-        .sidebar-btn {
-            background: transparent;
-            color: var(--text-muted);
-            border: 1px solid transparent;
-            padding: 0.8rem 1rem;
-            border-radius: 10px;
-            cursor: pointer;
-            text-align: left;
-            font-size: 0.95rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            display: block;
-        }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
 
-        .sidebar-btn:hover {
-            color: white;
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.05);
-            transform: translateX(4px);
-        }
+    .form-group.full {
+      grid-column: span 2;
+    }
 
-        /* Aktiver Button bekommt NoRisk Akzentfarbe */
-        .sidebar-btn.active {
-            color: white;
-            background: linear-gradient(135deg, var(--accent-purple), var(--accent-glow));
-            box-shadow: 0 4px 15px rgba(147, 51, 234, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
+    label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent-secondary);
+    }
 
- 
-        .content {
-            flex: 1;
-            padding: 3rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-        }
+    input[type="color"] {
+      width: 100%;
+      height: 38px;
+      border: 1px solid var(--panel-border);
+      background: transparent;
+      border-radius: 8px;
+      cursor: pointer;
+    }
 
-        .content h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
+    select, input[type="range"] {
+      width: 100%;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--panel-border);
+      color: var(--text-main);
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
 
-  
-        .taskbar {
-            height: 40px;
-            background: rgba(10, 9, 15, 0.9);
-            border-top: 1px solid var(--panel-border);
-            z-index: 20;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 1.5rem;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
+    select option {
+      background: #0f051d;
+      color: #ffffff;
+    }
 
-        .taskbar-right {
-            display: flex;
-            gap: 1.5rem;
-        }
+    .range-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        .version-tag {
-            color: var(--accent-glow);
-            font-weight: 600;
-        }
-    </style>
+    .range-value {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: none;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      color: var(--bg-dark);
+      box-shadow: 0 0 12px var(--accent-primary);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--panel-border);
+      color: var(--text-main);
+    }
+    .btn:hover { opacity: 0.9; }
+  </style>
 </head>
 <body>
 
- 
-    <canvas id="fxCanvas"></canvas>
+  <canvas id="bg-canvas"></canvas>
 
-    <div class="main-layout">
-        <aside class="sidebar">
-            <div class="logo-area">NORISK</div>
-            <a href="#" class="sidebar-btn active">Play</a>
-            <a href="#" class="sidebar-btn">Mods</a>
-            <a href="#" class="sidebar-btn">Cosmetics</a>
-            <a href="home.html" class="sidebar-btn">Theme Editor</a> <!-- Link zurück zum Editor -->
-        </aside>
+  <div class="studio-container">
+    <h1>
+      <span>⚙️ Theme Studio</span>
+      <span style="font-size: 0.9rem; font-weight: normal; color: var(--text-main); opacity: 0.7;">Live Editor</span>
+    </h1>
 
-        
-        <main class="content">
-            <h2>DV CLIENT</h2>
-            <p style="color: var(--text-muted);">Next Generation of Drones</p>
-        </main>
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="bg-color">Hintergrundfarbe</label>
+        <input type="color" id="bg-color" value="#0f051d">
+      </div>
+
+      <div class="form-group">
+        <label for="fx-select">Hintergrund-Effekt</label>
+        <select id="fx-select">
+          <option value="magic">Magic / Runes</option>
+          <option value="sparks">Sparks</option>
+          <option value="snow">Snow</option>
+          <option value="bubbles">Bubbles</option>
+          <option value="matrix">Matrix Code</option>
+          <option value="grid">Cyber Grid</option>
+          <option value="nebula">Nebula Glow</option>
+          <option value="warp">Warp Speed</option>
+          <option value="orbit">Orbit Rings</option>
+          <option value="waves">Energy Waves</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="primary-color">Primäre Akzentfarbe</label>
+        <input type="color" id="primary-color" value="#ff007f">
+      </div>
+
+      <div class="form-group">
+        <label for="secondary-color">Sekundäre Akzentfarbe</label>
+        <input type="color" id="secondary-color" value="#00f3ff">
+      </div>
+
+      <div class="form-group full">
+        <div class="range-row">
+          <label for="fx-count">Partikel-Menge / Dichte</label>
+          <span class="range-value" id="count-val">75</span>
+        </div>
+        <input type="range" id="fx-count" min="10" max="300" value="75">
+      </div>
+
+      <div class="form-group full">
+        <div class="range-row">
+          <label for="fx-speed">Geschwindigkeit / Intensität</label>
+          <span class="range-value" id="speed-val">1.0x</span>
+        </div>
+        <input type="range" id="fx-speed" min="0.1" max="3.5" step="0.1" value="1.0">
+      </div>
+
+      <div class="form-group full">
+        <div class="range-row">
+          <label for="fx-size">Skalierung / Größe</label>
+          <span class="range-value" id="size-val">1.0x</span>
+        </div>
+        <input type="range" id="fx-size" min="0.5" max="3.0" step="0.1" value="1.0">
+      </div>
     </div>
 
-    <!-- Untere Taskbar -->
-    <footer class="taskbar">
-        <div class="taskbar-left"></div>
-        <div class="taskbar-right">
-            <div>Version: <span id="versionDisplay" class="version-tag">Lädt...</span></div>
-            <div id="clockDisplay">00:00:00</div>
-        </div>
-    </footer>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="exportJson()">💾 Exportieren</button>
+      <button class="btn btn-secondary" onclick="resetDefaults()">🔄 Standard</button>
+      <a href="/home" class="btn btn-primary">🚀 Zum Dashboard</a>
+    </div>
+  </div>
 
-        <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const root = document.documentElement;
-            const canvas = document.getElementById('fxCanvas');
-            const ctx = canvas.getContext('2d');
+  <script>
+    let animationFrameId = null;
 
-            
-            const defaults = { bg: '#0a090f', accent: '#9333ea', glow: '#bd5cff', fx: 'none' };
-            
-            const bg = localStorage.getItem('themeColor1') || defaults.bg;
-            const accent = localStorage.getItem('themeColor2') || defaults.accent;
-            const glow = localStorage.getItem('themeColor3') || defaults.glow;
-            const fx = localStorage.getItem('launcherFX') || defaults.fx;
+    const bgInput = document.getElementById('bg-color');
+    const primaryInput = document.getElementById('primary-color');
+    const secondaryInput = document.getElementById('secondary-color');
+    const fxSelect = document.getElementById('fx-select');
+    const countInput = document.getElementById('fx-count');
+    const speedInput = document.getElementById('fx-speed');
+    const sizeInput = document.getElementById('fx-size');
 
-       
-            root.style.setProperty('--bg-dark', bg);
-            root.style.setProperty('--accent-purple', accent);
-            root.style.setProperty('--accent-glow', glow);
+    const countVal = document.getElementById('count-val');
+    const speedVal = document.getElementById('speed-val');
+    const sizeVal = document.getElementById('size-val');
 
-     
-            const activeBtn = document.querySelector('.sidebar-btn.active');
-            if(activeBtn) activeBtn.style.boxShadow = `0 4px 15px ${accent}44`;
+    function hexToRgba(hex, alpha) {
+      let c = hex.replace('#', '');
+      if (c.length === 3) c = c.split('').map(x => x + x).join('');
+      const num = parseInt(c, 16);
+      return `rgba(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}, ${alpha})`;
+    }
 
-   
-            function updateClock() {
-                const now = new Date();
-                const timeString = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                document.getElementById('clockDisplay').textContent = timeString;
-            }
-            setInterval(updateClock, 1000);
-            updateClock();
+    function getConfigObj() {
+      return {
+        bg: bgInput.value,
+        primary: primaryInput.value,
+        secondary: secondaryInput.value,
+        fx: fxSelect.value,
+        count: Number(countInput.value),
+        speed: Number(speedInput.value),
+        sizeScale: Number(sizeInput.value)
+      };
+    }
 
+    function applyConfig(config) {
+      document.documentElement.style.setProperty('--bg-dark', config.bg);
+      document.documentElement.style.setProperty('--accent-primary', config.primary);
+      document.documentElement.style.setProperty('--accent-secondary', config.secondary);
+      document.documentElement.style.setProperty('--panel-bg', hexToRgba(config.bg, 0.85));
+      document.documentElement.style.setProperty('--panel-border', hexToRgba(config.primary, 0.4));
+      initCanvasFx(config);
+    }
 
-            function loadVersion() {
-                fetch('latest.json')
-                    .then(response => {
-                        if (!response.ok) throw new Error('Netzwerk-Fehler beim Laden der JSON');
-                        return response.json();
-                    })
-                    .then(data => {
-                        document.getElementById('versionDisplay').textContent = data.version || "Unbekannt";
-                    })
-                    .catch(error => {
-                        console.error('Fehler:', error);
-                        document.getElementById('versionDisplay').textContent = "v1.0.0 (Offline)";
-                    });
-            }
-            loadVersion();
+    function updateLivePreview() {
+      countVal.textContent = countInput.value;
+      speedVal.textContent = speedInput.value + 'x';
+      sizeVal.textContent = sizeInput.value + 'x';
+      
+      const config = getConfigObj();
+      applyConfig(config);
+      localStorage.setItem('customThemeConfig', JSON.stringify(config));
+    }
 
+    [bgInput, primaryInput, secondaryInput, fxSelect, countInput, speedInput, sizeInput].forEach(element => {
+      element.addEventListener('input', updateLivePreview);
+      element.addEventListener('change', updateLivePreview);
+    });
 
-            let animationFrameId = null;
-            let matrixDrops = [];
-            let enchantmentParticles = [];
-            let auroraPhase = 0;
+    function exportJson() {
+      const config = getConfigObj();
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config, null, 2));
+      const dlAnchor = document.createElement('a');
+      dlAnchor.setAttribute("href", dataStr);
+      dlAnchor.setAttribute("download", "theme_config.json");
+      document.body.appendChild(dlAnchor);
+      dlAnchor.click();
+      dlAnchor.remove();
+    }
 
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
-            window.addEventListener('resize', resizeCanvas);
-            resizeCanvas();
+    function resetDefaults() {
+      bgInput.value = '#0f051d';
+      primaryInput.value = '#ff007f';
+      secondaryInput.value = '#00f3ff';
+      fxSelect.value = 'magic';
+      countInput.value = 75;
+      speedInput.value = 1.0;
+      sizeInput.value = 1.0;
+      updateLivePreview();
+      localStorage.removeItem('customThemeConfig');
+    }
 
-            function initEffects(effect) {
-                if (fx === 'matrix') {
-                    const columns = Math.floor(canvas.width / 16) + 1;
-                    matrixDrops = Array(columns).fill(1).map(() => Math.random() * -100);
-                } else if (fx === 'enchantment') {
-                    enchantmentParticles = Array(40).fill(0).map(() => ({
-                        x: Math.random() * canvas.width,
-                        y: Math.random() * canvas.height + canvas.height,
-                        speed: 0.5 + Math.random() * 1.2,
-                        char: String.fromCharCode(0x2190 + Math.floor(Math.random() * 100)),
-                        size: 10 + Math.random() * 10,
-                        opacity: Math.random()
-                    }));
-                }
-                if (fx !== 'none') draw();
-            }
+    function initCanvasFx(config) {
+      const canvas = document.getElementById('bg-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
 
-            function draw() {
-                if (fx === 'matrix') {
-                    ctx.fillStyle = `rgba(${hexToRgb(bg)}, 0.08)`;
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    ctx.font = '15px monospace';
-                    matrixDrops.forEach((y, i) => {
-                        const text = String.fromCharCode(33 + Math.floor(Math.random() * 93));
-                        const x = i * 16;
-                        ctx.fillStyle = Math.random() > 0.98 ? glow : accent;
-                        ctx.fillText(text, x, y);
-                        if (y > canvas.height && Math.random() > 0.975) matrixDrops[i] = 0;
-                        matrixDrops[i] += 16;
-                    });
-                } 
-                else if (fx === 'enchantment') {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    ctx.font = '14px sans-serif';
-                    enchantmentParticles.forEach(p => {
-                        ctx.fillStyle = `rgba(${hexToRgb(accent)}, ${p.opacity})`;
-                        ctx.fillText(p.char, p.x, p.y);
-                        p.y -= p.speed;
-                        p.opacity -= 0.001;
-                        if (p.y < -20 || p.opacity <= 0) {
-                            p.y = canvas.height + 20;
-                            p.x = Math.random() * canvas.width;
-                            p.opacity = Math.random();
-                        }
-                    });
-                } 
-                else if (fx === 'aurora') {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    auroraPhase += 0.002;
-                    for (let i = 0; i < 2; i++) {
-                        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-                        gradient.addColorStop(0, 'transparent');
-                        gradient.addColorStop(0.5, `rgba(${hexToRgb(accent)}, ${0.1 - i * 0.03})`);
-                        gradient.addColorStop(1, 'transparent');
-                        ctx.fillStyle = gradient;
-                        ctx.beginPath();
-                        ctx.moveTo(0, canvas.height);
-                        for (let x = 0; x <= canvas.width; x += 30) {
-                            const y = Math.sin(x * 0.002 + auroraPhase + i) * 100 + (canvas.height * 0.5);
-                            ctx.lineTo(x, y);
-                        }
-                        ctx.lineTo(canvas.width, canvas.height);
-                        ctx.fill();
-                    }
-                }
-                if (fx !== 'none') animationFrameId = requestAnimationFrame(draw);
-            }
+      const fxType = config.fx || 'magic';
+      const primaryColor = config.primary || '#ff007f';
+      const secondaryColor = config.secondary || '#00f3ff';
+      const count = Number(config.count) || 75;
+      const speedMul = Number(config.speed) || 1.0;
+      const sizeMul = Number(config.sizeScale) || 1.0;
 
-            function hexToRgb(hex) {
-                const bigint = parseInt(hex.slice(1), 16);
-                return `${(bigint >> 16) & 255}, ${(bigint >> 8) & 255}, ${bigint & 255}`;
-            }
+      const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+      resize();
+      window.onresize = resize;
 
-            initEffects(fx);
+      let particles = [];
+      const enchantmentChars = 'ᔑ⎓╎ꖎ∷⨅¡!¿?⎓ꖎ╎ᔑ⎓╎ꖎ⨅⨅';
+      const matrixChars = '0123456789ABCDEFXYZ@#$%';
+
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 1.5,
+          vy: (Math.random() - 0.5) * 1.5,
+          size: (Math.random() * 4 + 2) * sizeMul,
+          alpha: Math.random() * 0.7 + 0.3,
+          color: Math.random() > 0.5 ? primaryColor : secondaryColor,
+          char: enchantmentChars.charAt(Math.floor(Math.random() * enchantmentChars.length)),
+          mChar: matrixChars.charAt(Math.floor(Math.random() * matrixChars.length)),
+          angle: Math.random() * Math.PI * 2,
+          radius: Math.random() * Math.max(canvas.width, canvas.height) * 0.5
         });
-    </script>
+      }
+
+      let step = 0;
+
+      function draw() {
+        step += 0.03 * speedMul;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (fxType === 'magic') {
+          particles.forEach(p => {
+            p.y -= (0.8 * speedMul);
+            if (p.y < -20) { p.y = canvas.height + 20; p.x = Math.random() * canvas.width; }
+            ctx.save();
+            ctx.fillStyle = hexToRgba(p.color, p.alpha);
+            ctx.font = `${Math.floor(14 * sizeMul)}px sans-serif`;
+            ctx.shadowBlur = 8; ctx.shadowColor = p.color;
+            ctx.fillText(p.char, p.x, p.y);
+            ctx.restore();
+          });
+        } else if (fxType === 'sparks') {
+          particles.forEach(p => {
+            p.x += p.vx * 2 * speedMul; p.y += p.vy * 2 * speedMul;
+            if (p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height) {
+              p.x = canvas.width / 2; p.y = canvas.height / 2;
+              p.vx = (Math.random() - 0.5) * 4; p.vy = (Math.random() - 0.5) * 4;
+            }
+            ctx.save();
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.size * 0.8, 0, Math.PI * 2);
+            ctx.fillStyle = p.color; ctx.shadowBlur = 10; ctx.shadowColor = p.color;
+            ctx.fill(); ctx.restore();
+          });
+        } else if (fxType === 'snow') {
+          particles.forEach(p => {
+            p.y += (p.size * 0.4 * speedMul); p.x += Math.sin(step + p.y * 0.01) * 0.5;
+            if (p.y > canvas.height + 10) { p.y = -10; p.x = Math.random() * canvas.width; }
+            ctx.save();
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.size * 0.9, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff'; ctx.shadowBlur = 4; ctx.shadowColor = secondaryColor;
+            ctx.fill(); ctx.restore();
+          });
+        } else if (fxType === 'bubbles') {
+          particles.forEach(p => {
+            p.y -= (1.2 * speedMul); p.x += Math.cos(step + p.y * 0.02) * 0.8;
+            if (p.y < -20) { p.y = canvas.height + 20; p.x = Math.random() * canvas.width; }
+            ctx.save();
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.size * 1.5 * sizeMul, 0, Math.PI * 2);
+            ctx.strokeStyle = p.color; ctx.lineWidth = 1.5; ctx.shadowBlur = 6; ctx.shadowColor = p.color;
+            ctx.stroke(); ctx.restore();
+          });
+        } else if (fxType === 'matrix') {
+          ctx.font = `${Math.floor(16 * sizeMul)}px monospace`;
+          particles.forEach(p => {
+            p.y += (3 * speedMul);
+            if (p.y > canvas.height) { p.y = -20; p.x = Math.random() * canvas.width; }
+            ctx.save();
+            ctx.fillStyle = p.color; ctx.shadowBlur = 8; ctx.shadowColor = p.color;
+            ctx.fillText(p.mChar, p.x, p.y);
+            ctx.restore();
+          });
+        } else if (fxType === 'grid') {
+          ctx.strokeStyle = hexToRgba(primaryColor, 0.3); ctx.lineWidth = 1 * sizeMul;
+          let horizon = canvas.height * 0.5;
+          let offset = (step * 20 * speedMul) % 40;
+          for (let y = horizon; y < canvas.height; y += (y - horizon) * 0.1 + 10) {
+            ctx.beginPath(); ctx.moveTo(0, y + offset); ctx.lineTo(canvas.width, y + offset); ctx.stroke();
+          }
+          for (let x = -canvas.width; x < canvas.width * 2; x += 60) {
+            ctx.beginPath(); ctx.moveTo(canvas.width / 2, horizon); ctx.lineTo(x + offset * 2, canvas.height); ctx.stroke();
+          }
+        } else if (fxType === 'nebula') {
+          particles.forEach(p => {
+            p.x += Math.sin(step * 0.5 + p.y) * 0.5; p.y += Math.cos(step * 0.5 + p.x) * 0.5;
+            ctx.save();
+            let grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 15 * sizeMul);
+            grad.addColorStop(0, hexToRgba(p.color, 0.3)); grad.addColorStop(1, 'transparent');
+            ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(p.x, p.y, p.size * 15 * sizeMul, 0, Math.PI * 2);
+            ctx.fill(); ctx.restore();
+          });
+        } else if (fxType === 'warp') {
+          let cx = canvas.width / 2, cy = canvas.height / 2;
+          particles.forEach(p => {
+            p.angle += 0.01 * speedMul; p.radius += (2 * speedMul);
+            if (p.radius > Math.max(canvas.width, canvas.height)) p.radius = 10;
+            let x = cx + Math.cos(p.angle) * p.radius, y = cy + Math.sin(p.angle) * p.radius;
+            ctx.save(); ctx.strokeStyle = p.color; ctx.lineWidth = p.size * sizeMul;
+            ctx.shadowBlur = 8; ctx.shadowColor = p.color;
+            ctx.beginPath(); ctx.moveTo(x, y);
+            ctx.lineTo(cx + Math.cos(p.angle) * (p.radius + 15), cy + Math.sin(p.angle) * (p.radius + 15));
+            ctx.stroke(); ctx.restore();
+          });
+        } else if (fxType === 'orbit') {
+          let cx = canvas.width / 2, cy = canvas.height / 2;
+          particles.forEach((p, idx) => {
+            p.angle += (0.01 * (idx % 2 === 0 ? 1 : -1) * speedMul);
+            ctx.save(); ctx.beginPath();
+            ctx.arc(cx, cy, (idx * 12 + 40) * sizeMul, p.angle, p.angle + 0.8);
+            ctx.strokeStyle = p.color; ctx.lineWidth = 2 * sizeMul;
+            ctx.shadowBlur = 6; ctx.shadowColor = p.color; ctx.stroke(); ctx.restore();
+          });
+        } else if (fxType === 'waves') {
+          ctx.lineWidth = 2 * sizeMul;
+          for (let i = 0; i < 4; i++) {
+            ctx.beginPath(); ctx.strokeStyle = i % 2 === 0 ? primaryColor : secondaryColor;
+            ctx.shadowBlur = 10; ctx.shadowColor = ctx.strokeStyle;
+            for (let x = 0; x < canvas.width; x += 10) {
+              let y = (canvas.height / 2) + Math.sin(x * 0.005 + step + (i * 0.8)) * (80 * sizeMul) + (i * 20);
+              if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+          }
+        }
+
+        animationFrameId = requestAnimationFrame(draw);
+      }
+      draw();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('customThemeConfig');
+      if (saved) {
+        try {
+          const cfg = JSON.parse(saved);
+          if (cfg.bg) bgInput.value = cfg.bg;
+          if (cfg.primary) primaryInput.value = cfg.primary;
+          if (cfg.secondary) secondaryInput.value = cfg.secondary;
+          if (cfg.fx) fxSelect.value = cfg.fx;
+          if (cfg.count !== undefined) countInput.value = cfg.count;
+          if (cfg.speed !== undefined) speedInput.value = cfg.speed;
+          if (cfg.sizeScale !== undefined) sizeInput.value = cfg.sizeScale;
+        } catch (e) {}
+      }
+      updateLivePreview();
+    });
+  </script>
 </body>
 </html>
