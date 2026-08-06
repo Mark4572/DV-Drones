@@ -21,7 +21,7 @@ uptodate = True
 class Server:
     def __init__(self):
         self.svr = fs.Flask(__name__, static_folder="static", static_url_path="/static")
-        self.register_routes()
+        self.routes()
 
     def init(self):
         return fs.send_file("init.html")
@@ -87,22 +87,35 @@ class Server:
                 <h1>007 - Config file error </h1>
                 <p>Config file missing or corrupted.</p>
             '''
+            case 403:
+                return '''
+                <h1>403 - Forbidden</h1>
+                <p>You have no permission to visit this site.</p>
+            '''
+            case 404:
+                return '''
+                <h1>404 -  Not found</h1>
+                <p>The Site you are looking for was not found</p>
+            '''
+            case 500:
+                return '''
+                <h1>500 -  Internal Server error</h1>
+                <p>An internal server error occurred</p>
+            '''
             
-    
-
-
-    def register_routes(self):
-        self.svr.add_url_rule("/", "init", self.init)
-        self.svr.add_url_rule("/api/status", "status", self.status)
-        self.svr.add_url_rule("/home", "home", self.home)
-        self.svr.add_url_rule("/api", "api", self.api)
-        self.svr.add_url_rule("/update", "update", self.update)
-        self.svr.add_url_rule("/api/ready", "cs", self.cs)
-
-    def add_route(self, rule, endpoint, view_func, methods=None):
+    def routes(self):
+        self.svr.route("/", methods=["GET"])(self.init)
+        self.svr.route("/api/status", methods=["GET"])(self.status)
+        self.svr.route("/home", methods=["GET"])(self.home)
+        self.svr.route("/api", methods=["GET"])(self.api)
+        self.svr.route("/update", methods=["GET"])(self.update)
+        self.svr.route("/api/ready", methods=["GET"])(self.cs)
+        self.svr.route("/error", methods=["GET"])(self.error)
+        
+    def add_route(self, rule, view_func, methods=None):
         if methods is None:
          methods = ["GET"]
-         self.svr.add_url_rule(rule, endpoint, view_func, methods=methods)
+         self.svr.route(rule, methods=methods)(view_func)
          
 def error(code):
     match code:
@@ -218,22 +231,22 @@ class vx(QMainWindow):
 class thread(threading.Thread):
     @staticmethod
     
-    def add_thread(target, args=()):
+    def add(target, args=()):
         new_thread = threading.Thread(target=target, args=args, daemon=True)
         new_thread.start()
         return new_thread
         
-    def remove_thread(thread):
+    def remove(thread):
         thread.thread.join()
         
-    def init_thread(thread):
+    def init(thread):
         thread.thread = threading.Thread(target=thread.target, args=thread.args)
         thread.thread.start()
         
-    def stop_thread(thread):
+    def stop(thread):
         thread.thread.join()
         
-    def restart_thread(thread):
+    def restart(thread):
         thread.thread.join()
         thread.thread = threading.Thread(target=thread.target, args=thread.args)
         thread.thread.start()
@@ -248,15 +261,19 @@ class client:
             error(0)
             return False
         connect = True
+        
+    def init(fs):
+        fs = Server()
+        fs.routes()
+        fs.svr.run(host="0.0.0.0", port=505, debug=False, use_reloader=False)
+        
+        
 
-def run(fs):
-    fs = Server()
-    fs.register_routes()
-    fs.svr.run(host="0.0.0.0", port=505, debug=False, use_reloader=False)
 
 if __name__ == "__main__":
         
-    thread.add_thread(target=run, args=(fs,))
+    thread.add(target=client.init, args=(fs,))
+    thread.add(target=vx.window)
     load.app()
     install.update("latest.json")
     qt_app = QApplication(sys.argv)
