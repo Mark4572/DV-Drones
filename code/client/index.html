@@ -1,259 +1,321 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customizable Theme Background</title>
+    <title>NoRisk Launcher - Dashboard</title>
     <style>
-        
+        /* Core Reset & Fonts */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
-        
+        /* Standard Werte */
         :root {
-            --bg-gradient: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            --panel-bg: rgba(255, 255, 255, 0.1);
-            --text-color: #ffffff;
-            --accent-color: #00adb5;
-            --border-color: rgba(255, 255, 255, 0.2);
+            --bg-dark: #0a090f;
+            --accent-purple: #9333ea;
+            --accent-glow: #bd5cff;
+            --panel-bg: rgba(20, 18, 31, 0.6);
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
         }
 
-        /* background */
         body {
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: var(--bg-gradient);
-            background-size: 400% 400%;
-            animation: gradientAnimation 15s ease infinite;
-            color: var(--text-color);
-            transition: background 0.8s ease, color 0.5s ease;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
             overflow: hidden;
-        }
-
-        
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        
-        .control-panel {
-            background: var(--panel-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            padding: 2.5rem;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            z-index: 10;
-        }
-
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
-
-        p {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            margin-bottom: 2rem;
-        }
-
-        
-        .theme-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .theme-btn {
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            background: rgba(0, 0, 0, 0.2);
-            color: #fff;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.85rem;
-            transition: all 0.3s ease;
-        }
-
-        .theme-btn:hover {
-            background: var(--accent-color);
-            color: #000;
-            transform: translateY(-2px);
-        }
-
-        
-        .customizer {
-            border-top: 1px solid var(--border-color);
-            padding-top: 1.5rem;
-        }
-
-        .customizer h2 {
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-
-        .color-picker-group {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .picker-wrapper {
+            position: relative;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            font-size: 0.75rem;
-            gap: 5px;
-            opacity: 0.9;
         }
 
-        input[type="color"] {
-            -webkit-appearance: none;
-            border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+       
+        #fxCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+   
+        .main-layout {
+            flex: 1;
+            display: flex;
+            z-index: 10;
+            position: relative;
+            height: calc(100vh - 40px);
+        }
+
+  
+        .sidebar {
+            width: 240px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid var(--panel-border);
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .logo-area {
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            margin-bottom: 2rem;
+            padding-left: 0.5rem;
+            background: linear-gradient(135deg, #ffffff 40%, var(--accent-glow) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-btn {
             background: transparent;
+            color: var(--text-muted);
+            border: 1px solid transparent;
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: block;
         }
 
-        input[type="color"]::-webkit-color-swatch-wrapper {
-            padding: 0;
+        .sidebar-btn:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.05);
+            transform: translateX(4px);
         }
 
-        input[type="color"]::-webkit-color-swatch {
-            border: 2px solid #ffffff;
-            border-radius: 50%;
+        /* Aktiver Button bekommt NoRisk Akzentfarbe */
+        .sidebar-btn.active {
+            color: white;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-glow));
+            box-shadow: 0 4px 15px rgba(147, 51, 234, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+ 
+        .content {
+            flex: 1;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+  
+        .taskbar {
+            height: 40px;
+            background: rgba(10, 9, 15, 0.9);
+            border-top: 1px solid var(--panel-border);
+            z-index: 20;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .taskbar-right {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .version-tag {
+            color: var(--accent-glow);
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
 
-    <div class="control-panel">
-        <h1>Theme Engine</h1>
-        <p>Choose a preset or engineer your own background gradient</p>
+ 
+    <canvas id="fxCanvas"></canvas>
 
-        <!-- Preset Section -->
-        <div class="theme-grid">
-            <button class="theme-btn" onclick="setPreset('midnight')">Midnight Ocean</button>
-            <button class="theme-btn" onclick="setPreset('sunset')">Cyber Sunset</button>
-            <button class="theme-btn" onclick="setPreset('forest')">Deep Forest</button>
-            <button class="theme-btn" onclick="setPreset('aurora')">Northern Lights</button>
-            <button class="theme-btn" onclick="setPreset('dark')">Dark Mode</button>
-            <button class="theme-btn" onclick="setPreset('ocean')">Ocean Breeze</button>
-            <button class="theme-btn" onclick="setPreset('fire')">Fiery Passion</button>
-            <button class="theme-btn" onclick="setPreset('candy')">Candy Floss</button>
-            <button class="theme-btn" onclick="setPreset('night')">Night Sky</button>
-            <button class="theme-btn" onclick="setPreset('dawn')">Dawn Glow</button>
-            <button class="theme-btn" onclick="setPreset('twilight')">Twilight</button>
-        </div>
+    <div class="main-layout">
+        <aside class="sidebar">
+            <div class="logo-area">NORISK</div>
+            <a href="#" class="sidebar-btn active">Play</a>
+            <a href="#" class="sidebar-btn">Mods</a>
+            <a href="#" class="sidebar-btn">Cosmetics</a>
+            <a href="home.html" class="sidebar-btn">Theme Editor</a> <!-- Link zurück zum Editor -->
+        </aside>
 
-       
-        <div class="customizer">
-            <h2>Live Customizer</h2>
-            <div class="color-picker-group">
-                <div class="picker-wrapper">
-                    <input type="color" id="color1" value="#0f2027" oninput="updateCustomTheme()">
-                    <label for="color1">Color 1</label>
-                </div>
-                <div class="picker-wrapper">
-                    <input type="color" id="color2" value="#203a43" oninput="updateCustomTheme()">
-                    <label for="color2">Color 2</label>
-                </div>
-                <div class="picker-wrapper">
-                    <input type="color" id="color3" value="#2c5364" oninput="updateCustomTheme()">
-                    <label for="color3">Color 3</label>
-                </div>
-            </div>
-        </div>
+        
+        <main class="content">
+            <h2>DV CLIENT</h2>
+            <p style="color: var(--text-muted);">Next Generation of Drones</p>
+        </main>
     </div>
 
-<script>
-    const presets = {
-        midnight: { c1: '#0f2027', c2: '#203a43', c3: '#2c5364' },
-        sunset: { c1: '#ff5f6d', c2: '#ffc371', c3: '#ff9a9e' },
-        forest: { c1: '#134E5E', c2: '#71B280', c3: '#A8E6CF' },
-        aurora: { c1: '#00d2ff', c2: '#3a7bd5', c3: '#00c6ff' },
-        dark: { c1: '#000000', c2: '#434343', c3: '#666666' },
-        ocean: { c1: '#2E8BC0', c2: '#145DA0', c3: '#0C2D48' },
-        fire: { c1: '#FF512F', c2: '#DD2476', c3: '#FF512F' },
-        candy: { c1: '#ff9a9e', c2: '#fad0c4', c3: '#fbc2eb' },
-        night: { c1: '#141E30', c2: '#243B55', c3: '#141E30' },
-        dawn: { c1: '#FFDEE9', c2: '#B5FFFC', c3: '#FFDEE9' },
-        twilight: { c1: '#0F2027', c2: '#203A43', c3: '#2C5364' },
-        auroraBorealis: { c1: '#00c6ff', c2: '#0072ff', c3: '#00c6ff' }
-    };
-const root = document.documentElement;
+    <!-- Untere Taskbar -->
+    <footer class="taskbar">
+        <div class="taskbar-left"></div>
+        <div class="taskbar-right">
+            <div>Version: <span id="versionDisplay" class="version-tag">Lädt...</span></div>
+            <div id="clockDisplay">00:00:00</div>
+        </div>
+    </footer>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const root = document.documentElement;
+            const canvas = document.getElementById('fxCanvas');
+            const ctx = canvas.getContext('2d');
+
+            
+            const defaults = { bg: '#0a090f', accent: '#9333ea', glow: '#bd5cff', fx: 'none' };
+            
+            const bg = localStorage.getItem('themeColor1') || defaults.bg;
+            const accent = localStorage.getItem('themeColor2') || defaults.accent;
+            const glow = localStorage.getItem('themeColor3') || defaults.glow;
+            const fx = localStorage.getItem('launcherFX') || defaults.fx;
+
+       
+            root.style.setProperty('--bg-dark', bg);
+            root.style.setProperty('--accent-purple', accent);
+            root.style.setProperty('--accent-glow', glow);
+
+     
+            const activeBtn = document.querySelector('.sidebar-btn.active');
+            if(activeBtn) activeBtn.style.boxShadow = `0 4px 15px ${accent}44`;
+
+   
+            function updateClock() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                document.getElementById('clockDisplay').textContent = timeString;
+            }
+            setInterval(updateClock, 1000);
+            updateClock();
 
 
-function saveThemeToStorage(c1, c2, c3) {
-    localStorage.setItem('themeColor1', c1);
-    localStorage.setItem('themeColor2', c2);
-    localStorage.setItem('themeColor3', c3);
-}
-
-5
-function setPreset(themeName) {
-    const theme = presets[themeName];
-    
-    root.style.setProperty('--bg-gradient', `linear-gradient(135deg, ${theme.c1}, ${theme.c2}, ${theme.c3})`);
-    root.style.setProperty('--accent-color', theme.c2);
-
-    document.getElementById('color1').value = theme.c1;
-    document.getElementById('color2').value = theme.c2;
-    document.getElementById('color3').value = theme.c3;
-
-
-    saveThemeToStorage(theme.c1, theme.c2, theme.c3);
-}
+            function loadVersion() {
+                fetch('latest.json')
+                    .then(response => {
+                        if (!response.ok) throw new Error('Netzwerk-Fehler beim Laden der JSON');
+                        return response.json();
+                    })
+                    .then(data => {
+                        document.getElementById('versionDisplay').textContent = data.version || "Unbekannt";
+                    })
+                    .catch(error => {
+                        console.error('Fehler:', error);
+                        document.getElementById('versionDisplay').textContent = "v1.0.0 (Offline)";
+                    });
+            }
+            loadVersion();
 
 
-function updateCustomTheme() {
-    const c1 = document.getElementById('color1').value;
-    const c2 = document.getElementById('color2').value;
-    const c3 = document.getElementById('color3').value;
+            let animationFrameId = null;
+            let matrixDrops = [];
+            let enchantmentParticles = [];
+            let auroraPhase = 0;
 
-    root.style.setProperty('--bg-gradient', `linear-gradient(135deg, ${c1}, ${c2}, ${c3})`);
-    root.style.setProperty('--accent-color', c2);
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
 
+            function initEffects(effect) {
+                if (fx === 'matrix') {
+                    const columns = Math.floor(canvas.width / 16) + 1;
+                    matrixDrops = Array(columns).fill(1).map(() => Math.random() * -100);
+                } else if (fx === 'enchantment') {
+                    enchantmentParticles = Array(40).fill(0).map(() => ({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height + canvas.height,
+                        speed: 0.5 + Math.random() * 1.2,
+                        char: String.fromCharCode(0x2190 + Math.floor(Math.random() * 100)),
+                        size: 10 + Math.random() * 10,
+                        opacity: Math.random()
+                    }));
+                }
+                if (fx !== 'none') draw();
+            }
 
-    saveThemeToStorage(c1, c2, c3);
-}
+            function draw() {
+                if (fx === 'matrix') {
+                    ctx.fillStyle = `rgba(${hexToRgb(bg)}, 0.08)`;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.font = '15px monospace';
+                    matrixDrops.forEach((y, i) => {
+                        const text = String.fromCharCode(33 + Math.floor(Math.random() * 93));
+                        const x = i * 16;
+                        ctx.fillStyle = Math.random() > 0.98 ? glow : accent;
+                        ctx.fillText(text, x, y);
+                        if (y > canvas.height && Math.random() > 0.975) matrixDrops[i] = 0;
+                        matrixDrops[i] += 16;
+                    });
+                } 
+                else if (fx === 'enchantment') {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.font = '14px sans-serif';
+                    enchantmentParticles.forEach(p => {
+                        ctx.fillStyle = `rgba(${hexToRgb(accent)}, ${p.opacity})`;
+                        ctx.fillText(p.char, p.x, p.y);
+                        p.y -= p.speed;
+                        p.opacity -= 0.001;
+                        if (p.y < -20 || p.opacity <= 0) {
+                            p.y = canvas.height + 20;
+                            p.x = Math.random() * canvas.width;
+                            p.opacity = Math.random();
+                        }
+                    });
+                } 
+                else if (fx === 'aurora') {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    auroraPhase += 0.002;
+                    for (let i = 0; i < 2; i++) {
+                        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                        gradient.addColorStop(0, 'transparent');
+                        gradient.addColorStop(0.5, `rgba(${hexToRgb(accent)}, ${0.1 - i * 0.03})`);
+                        gradient.addColorStop(1, 'transparent');
+                        ctx.fillStyle = gradient;
+                        ctx.beginPath();
+                        ctx.moveTo(0, canvas.height);
+                        for (let x = 0; x <= canvas.width; x += 30) {
+                            const y = Math.sin(x * 0.002 + auroraPhase + i) * 100 + (canvas.height * 0.5);
+                            ctx.lineTo(x, y);
+                        }
+                        ctx.lineTo(canvas.width, canvas.height);
+                        ctx.fill();
+                    }
+                }
+                if (fx !== 'none') animationFrameId = requestAnimationFrame(draw);
+            }
 
-window.addEventListener('DOMContentLoaded', () => {
-    const c1 = localStorage.getItem('themeColor1');
-    const c2 = localStorage.getItem('themeColor2');
-    const c3 = localStorage.getItem('themeColor3');
+            function hexToRgb(hex) {
+                const bigint = parseInt(hex.slice(1), 16);
+                return `${(bigint >> 16) & 255}, ${(bigint >> 8) & 255}, ${bigint & 255}`;
+            }
 
-    if (c1 && c2 && c3) {
-        root.style.setProperty('--bg-gradient', `linear-gradient(135deg, ${c1}, ${c2}, ${c3})`);
-        root.style.setProperty('--accent-color', c2);
-        if(document.getElementById('color1')) {
-            document.getElementById('color1').value = c1;
-            document.getElementById('color2').value = c2;
-            document.getElementById('color3').value = c3;
-        }
-    }
-});
- </script>
+            initEffects(fx);
+        });
+    </script>
 </body>
 </html>

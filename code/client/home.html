@@ -3,19 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>home</title>
+    <title>NoRisk Launcher - Customizer & FX</title>
     <style>
+        /* Core Reset & Fonts */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
-
         :root {
-            --bg-gradient: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            --accent-color: #00adb5;
+            --bg-dark: #0a090f;
+            --accent-purple: #9333ea;
+            --accent-glow: #bd5cff;
+            --panel-bg: rgba(20, 18, 31, 0.75);
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
         }
 
         body {
@@ -24,58 +29,451 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: var(--bg-gradient);
-            background-size: 400% 400%;
-            animation: gradientAnimation 15s ease infinite;
-            color: white;
-        }
-
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .content-box {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow: hidden;
+            position: relative;
             padding: 2rem;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            text-align: center;
+            transition: background-color 0.3s ease;
         }
 
-        a {
-            color: var(--accent-color);
-            margin-top: 1rem;
+        /* Fullscreen Canvas */
+        #fxCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        
+        .launcher-container {
+            background: var(--panel-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 1px solid var(--panel-border);
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            max-width: 480px;
+            width: 100%;
+            z-index: 10; 
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            margin-bottom: 0.3rem;
+            background: linear-gradient(135deg, #ffffff 40%, var(--accent-glow) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+
+        /* Editor */
+        .editor-section {
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 1.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: left;
+        }
+
+        .editor-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent-glow);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+        }
+
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            font-size: 0.85rem;
+            color: var(--text-main);
+        }
+
+       
+        select {
+            background: #14121f;
+            color: var(--text-main);
+            border: 1px solid var(--panel-border);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        select:focus {
+            border-color: var(--accent-purple);
+        }
+
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            background: none;
+            transition: transform 0.2s;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+        }
+
+        input[type="color"]:hover {
+            transform: scale(1.15);
+        }
+
+        
+        .btn-launch {
+            color: white;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-glow));
+            padding: 0.9rem 2rem;
+            border-radius: 12px;
             display: inline-block;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 8px 24px rgba(147, 51, 234, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            width: 100%;
+        }
+
+        .btn-launch:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .btn-reset {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-top: 0.8rem;
+            text-decoration: underline;
+        }
+
+        .btn-reset:hover {
+            color: white;
         }
     </style>
 </head>
 <body>
 
-    <div class="content-box">
-        <h1></h1>
-        <p></p>
-        <a href="index.html">Theme Editor</a>
+    
+    <canvas id="fxCanvas"></canvas>
+
+    <div class="launcher-container">
+        <h1>DV CLIENT</h1>
+        <p>Visual Settigs</p>
+        
+        <div class="editor-section">
+            <div class="editor-title">Theme & FX Customizer</div>
+            
+            
+            <div class="control-group">
+                <label for="fxSelect">Hintergrund-Effekt</label>
+                <select id="fxSelect">
+                    <option value="none">Kein Effekt (Standard)</option>
+                    <option value="matrix">Matrix Rain</option>
+                    <option value="enchantment">Enchantment Symbols</option>
+                    <option value="aurora">Aurora Waves</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="bgColor">Hintergrundfarbe</label>
+                <input type="color" id="bgColor" value="#0a090f">
+            </div>
+            
+            <div class="control-group">
+                <label for="accentColor">Haupt-Akzent</label>
+                <input type="color" id="accentColor" value="#9333ea">
+            </div>
+            
+            <div class="control-group">
+                <label for="glowColor">Highlights</label>
+                <input type="color" id="glowColor" value="#bd5cff">
+            </div>
+        </div>
+
+        <a href="index.html" class="btn-launch" id="actionButton">Änderungen Speichern</a>
+        <button class="btn-reset" id="resetBtn">Standard wiederherstellen</button>
     </div>
 
     <script>
-        window.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => {
             const root = document.documentElement;
+            const canvas = document.getElementById('fxCanvas');
+            const ctx = canvas.getContext('2d');
             
+            
+            const pickerBg = document.getElementById('bgColor');
+            const pickerAccent = document.getElementById('accentColor');
+            const pickerGlow = document.getElementById('glowColor');
+            const fxSelect = document.getElementById('fxSelect');
+            const actionButton = document.getElementById('actionButton');
+            const resetBtn = document.getElementById('resetBtn');
 
-            const c1 = localStorage.getItem('themeColor1');
-            const c2 = localStorage.getItem('themeColor2');
-            const c3 = localStorage.getItem('themeColor3');
+            const defaults = { bg: '#0a090f', accent: '#9333ea', glow: '#bd5cff', fx: 'none' };
+            let animationFrameId = null;
 
-            if (c1 && c2 && c3) {
-                root.style.setProperty('--bg-gradient', `linear-gradient(135deg, ${c1}, ${c2}, ${c3})`);
-                root.style.setProperty('--accent-color', c2);
+            
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
             }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            
+            let matrixDrops = [];
+            let enchantmentParticles = [];
+            let auroraPhase = 0;
+
+            function initEffects(effect) {
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                if (effect === 'matrix') {
+                    const columns = Math.floor(canvas.width / 16) + 1;
+                    matrixDrops = Array(columns).fill(1).map(() => Math.random() * -100);
+                } else if (effect === 'enchantment') {
+                    enchantmentParticles = Array(60).fill(0).map(() => ({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height + canvas.height,
+                        speed: 0.8 + Math.random() * 1.5,
+                        char: String.fromCharCode(0x2190 + Math.floor(Math.random() * 100)), // Minecraft Runen-Vibe
+                        size: 10 + Math.random() * 12,
+                        opacity: Math.random()
+                    }));
+                }
+                
+                if (effect !== 'none') draw();
+            }
+
+            function draw() {
+                const currentFx = fxSelect.value;
+                const accent = pickerAccent.value;
+                const glow = pickerGlow.value;
+
+                if (currentFx === 'matrix') {
+                    ctx.fillStyle = `rgba(${hexToRgb(pickerBg.value)}, 0.08)`;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    ctx.font = '15px monospace';
+                    matrixDrops.forEach((y, i) => {
+                        const text = String.fromCharCode(33 + Math.floor(Math.random() * 93));
+                        const x = i * 16;
+                        ctx.fillStyle = Math.random() > 0.98 ? glow : accent;
+                        ctx.fillText(text, x, y);
+                        if (y > canvas.height && Math.random() > 0.975) {
+                            matrixDrops[i] = 0;
+                        }
+                        matrixDrops[i] += 16;
+                    });
+                } else if (currentFx === 'enchantment') {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    ctx.font = '16px sans-serif';
+                    enchantmentParticles.forEach(p => {
+                        ctx.fillStyle = `rgba(${hexToRgb(accent)}, ${p.opacity})`;
+                        ctx.shadowColor = glow;
+                        ctx.shadowBlur = 4;
+                        ctx.fillText(p.char, p.x, p.y);
+                        p.y -= p.speed;
+                        p.opacity -= 0.0015;
+                        if (p.y < -20 || p.opacity <= 0) {
+                            p.y = canvas.height + 20;
+                            p.x = Math.random() * canvas.width;
+                            p.opacity = 0.5 + Math.random() * 0.5;
+                            p.char = String.fromCharCode(0x2F00 + Math.floor(Math.random() * 100));
+                        }
+                    });
+                    ctx.shadowBlur = 0;
+                } else if (currentFx === 'aurora') {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    auroraPhase += 0.004;
+
+                    for (let i = 0; i < 3; i++) {
+                        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                        gradient.addColorStop(0, 'transparent');
+                        gradient.addColorStop(0.5, `rgba(${hexToRgb(accent)}, ${0.15 - i * 0.03})`);
+                        gradient.addColorStop(1, 'transparent');
+                        ctx.fillStyle = gradient;
+                        ctx.beginPath();
+                        ctx.moveTo(0, canvas.height);
+                        for (let x = 0; x <= canvas.width; x += 20) {
+                            const y = Math.sin(x * 0.002 + auroraPhase + i) * 150 + (canvas.height * 0.4) + (i * 40);
+                            ctx.lineTo(x, y);
+                        }
+                        ctx.lineTo(canvas.width, canvas.height);
+                        ctx.fill();
+                    }
+                }
+
+                if (currentFx !== 'none') {
+                    animationFrameId = requestAnimationFrame(draw);
+                }
+            }
+
+         
+            function hexToRgb(hex) {
+                const bigint = parseInt(hex.slice(1), 16);
+                return `${(bigint >> 16) & 255}, ${(bigint >> 8) & 255}, ${bigint & 255}`;
+            }
+
+            
+            function updateTheme(bg, accent, glow, fx) {
+                root.style.setProperty('--bg-dark', bg);
+                root.style.setProperty('--accent-purple', accent);
+                root.style.setProperty('--accent-glow', glow);
+                actionButton.style.boxShadow = `0 8px 24px ${accent}66`;
+                pickerBg.value = bg;
+                pickerAccent.value = accent;
+                pickerGlow.value = glow;
+                fxSelect.value = fx;
+                initEffects(fx);
+            }
+
+            function saveTheme() {
+                localStorage.setItem('themeColor1', pickerBg.value);
+                localStorage.setItem('themeColor2', pickerAccent.value);
+                localStorage.setItem('themeColor3', pickerGlow.value);
+                localStorage.setItem('launcherFX', fxSelect.value);
+            }
+
+        
+            const storedBg = localStorage.getItem('themeColor1') || defaults.bg;
+            const storedAccent = localStorage.getItem('themeColor2') || defaults.accent;
+            const storedGlow = localStorage.getItem('themeColor3') || defaults.glow;
+            const storedFx = localStorage.getItem('launcherFX') || defaults.fx;
+            updateTheme(storedBg, storedAccent, storedGlow, storedFx);
+
+    
+            const inputs = [pickerBg, pickerAccent, pickerGlow, fxSelect];
+            inputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    updateTheme(pickerBg.value, pickerAccent.value, pickerGlow.value, fxSelect.value);
+                    saveTheme();
+                });
+            });
+
+            resetBtn.addEventListener('click', () => {
+                updateTheme(defaults.bg, defaults.accent, defaults.glow, defaults.fx);
+                saveTheme();
+            });
         });
-    </script>
-</body>
-</html>
+// --- 1. CONFIGURATION & STATE ---
+const root = document.documentElement;
+const canvas = document.getElementById('fxCanvas');
+const ctx = canvas.getContext('2d');
+
+// DOM Elemente laden
+const pickerBg = document.getElementById('bgColor');
+const pickerAccent = document.getElementById('accentColor');
+const pickerGlow = document.getElementById('glowColor');
+const fxSelect = document.getElementById('fxSelect');
+const actionButton = document.getElementById('actionButton');
+const resetBtn = document.getElementById('resetBtn');
+
+// Standard -  Theme
+const defaults = { 
+    bg: '#0a090f', 
+    accent: '#9333ea', 
+    glow: '#bd5cff', 
+    fx: 'none' 
+};
+
+
+function hexToRgb(hex) {
+    const bigint = parseInt(hex.slice(1), 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return `${r}, ${g}, ${b}`;
+}
+
+
+function updateTheme(bg, accent, glow, fx) {
+
+    root.style.setProperty('--bg-dark', bg);
+    root.style.setProperty('--accent-purple', accent);
+    root.style.setProperty('--accent-glow', glow);
+    
+
+    actionButton.style.boxShadow = `0 8px 24px ${accent}66`;
+    
+
+    pickerBg.value = bg;
+    pickerAccent.value = accent;
+    pickerGlow.value = glow;
+    fxSelect.value = fx;
+
+
+    initEffects(fx);
+}
+
+function saveTheme() {
+    localStorage.setItem('themeColor1', pickerBg.value);
+    localStorage.setItem('themeColor2', pickerAccent.value);
+    localStorage.setItem('themeColor3', pickerGlow.value);
+    localStorage.setItem('launcherFX', fxSelect.value);
+}
+
+
+
+
+const storedBg = localStorage.getItem('themeColor1') || defaults.bg;
+const storedAccent = localStorage.getItem('themeColor2') || defaults.accent;
+const storedGlow = localStorage.getItem('themeColor3') || defaults.glow;
+const storedFx = localStorage.getItem('launcherFX') || defaults.fx;
+
+
+updateTheme(storedBg, storedAccent, storedGlow, storedFx);
+
+
+const inputs = [pickerBg, pickerAccent, pickerGlow, fxSelect];
+inputs.forEach(input => {
+    input.addEventListener('input', () => {
+        updateTheme(pickerBg.value, pickerAccent.value, pickerGlow.value, fxSelect.value);
+        saveTheme();
+    });
+});
+
+
+resetBtn.addEventListener('click', () => {
+    updateTheme(defaults.bg, defaults.accent, defaults.glow, defaults.fx);
+    saveTheme();
+});

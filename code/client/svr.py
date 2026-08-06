@@ -20,91 +20,99 @@ uptodate = True
 #Flask server
 class Server:
     def __init__(self):
+        self.base_dir = os.path.dirname(os.path.abspath(__file__))
         self.svr = fs.Flask(__name__, static_folder="static", static_url_path="/static")
         self.routes()
 
     def init(self):
-        return fs.send_file("init.html")
+        path = os.path.join(self.base_dir, "init.html")
+        return fs.send_file(path)
 
     def status(self):
-        return fs.send_file("status.html")
+        path = os.path.join(self.base_dir, "status.html")
+        return fs.send_file(path)
 
     def api(self):
-        return fs.send_file("api.js")
+        path = os.path.join(self.base_dir, "api.js")
+        return fs.send_file(path)
     
     def home(self):
-        return fs.send_file("home.html")
+        path = os.path.join(self.base_dir, "home.html")
+        return fs.send_file(path)
     
     def update(self):
-        return fs.send_file("update.html")
+        path = os.path.join(self.base_dir, "update.html")
+        return fs.send_file(path)
     
     def cs(self):
         global ready
         return fs.jsonify({"ready": ready})
     
     def theme(self):
-        return fs.send_file("index.html")
+        path = os.path.join(self.base_dir, "index.html")
+        return fs.send_file(path)
     
     def error(self, code):
-        match code:
-            case 0:
-                return  '''
-                <h1>000 - No Connection</h1>
-                <p>There is no connection to the server. Please check your network connection and try again.</p>
+            match code:
+                case 0:
+                    return  '''
+                    <h1>000 - No Connection</h1>
+                    <p>There is no connection to the server. Please check your network connection and try again.</p>
+                    '''
+                case 1:
+                    return  '''
+                    <h1>001 - Invalid response from the server</h1>
+                    <p>The server returned an invalid response. Please try again later.</p>
+                    '''
+                case 2:
+                    return  '''
+                    <h1>002 - Update could not be installed</h1>
+                    <p>The update could not be installed. Please try again later.</p>
+                    '''
+                case 3:
+                    return  '''
+                    <h1>003 - Update could not be downloaded</h1>
+                    <p>The update could not be downloaded. Please check your network connection and try again.</p>
+                    '''
+                case 4:
+                    return  '''
+                    <h1>004 - Data could not be parsed</h1>
+                    <p>The data could not be parsed. Please try again later.</p>
+                    '''
+                case 5:
+                    return  '''
+                    <h1>005 - Invalid API response</h1>
+                    <p>The API returned an invalid response. Please try again later.</p>
+                    '''
+                case 6:
+                    return  '''
+                    <h1>006 - Invalid API login</h1>
+                    <p>The API login credentials are invalid. Please check your credentials and try again.</p>
+                    '''
+                case 7: 
+                    return  '''
+                    <h1>007 - Config file error </h1>
+                    <p>Config file missing or corrupted.</p>
                 '''
-            case 1:
-                return  '''
-                <h1>001 - Invalid response from the server</h1>
-                <p>The server returned an invalid response. Please try again later.</p>
+                case 403:
+                    return '''
+                    <h1>403 - Forbidden</h1>
+                    <p>You have no permission to visit this site.</p>
                 '''
-            case 2:
-                return  '''
-                <h1>002 - Update could not be installed</h1>
-                <p>The update could not be installed. Please try again later.</p>
+                case 404:
+                    return '''
+                    <h1>404 -  Not found</h1>
+                    <p>The Site you are looking for was not found</p>
                 '''
-            case 3:
-                return  '''
-                <h1>003 - Update could not be downloaded</h1>
-                <p>The update could not be downloaded. Please check your network connection and try again.</p>
+                case 500:
+                    return '''
+                    <h1>500 -  Internal Server error</h1>
+                    <p>An internal server error occurred</p>
                 '''
-            case 4:
-                return  '''
-                <h1>004 - Data could not be parsed</h1>
-                <p>The data could not be parsed. Please try again later.</p>
-                '''
-            case 5:
-                return  '''
-                <h1>005 - Invalid API response</h1>
-                <p>The API returned an invalid response. Please try again later.</p>
-                '''
-            case 6:
-                return  '''
-                <h1>006 - Invalid API login</h1>
-                <p>The API login credentials are invalid. Please check your credentials and try again.</p>
-                '''
-            case 7: 
-                return  '''
-                <h1>007 - Config file error </h1>
-                <p>Config file missing or corrupted.</p>
-            '''
-            case 403:
-                return '''
-                <h1>403 - Forbidden</h1>
-                <p>You have no permission to visit this site.</p>
-            '''
-            case 404:
-                return '''
-                <h1>404 -  Not found</h1>
-                <p>The Site you are looking for was not found</p>
-            '''
-            case 500:
-                return '''
-                <h1>500 -  Internal Server error</h1>
-                <p>An internal server error occurred</p>
-            '''
             
     def routes(self):
-        self.svr.route("/", methods=["GET"])(self.init)
+        self.svr.route("/", methods=["GET"])(self.theme)
+        self.svr.route("/init", methods=["GET"])(self.init)
         self.svr.route("/api/status", methods=["GET"])(self.status)
         self.svr.route("/home", methods=["GET"])(self.home)
         self.svr.route("/api", methods=["GET"])(self.api)
@@ -266,10 +274,7 @@ class client:
         fs = Server()
         fs.routes()
         fs.svr.run(host="0.0.0.0", port=505, debug=False, use_reloader=False)
-        
-        
-
-
+          
 if __name__ == "__main__":
         
     thread.add(target=client.init, args=(fs,))
